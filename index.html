@@ -136,14 +136,18 @@
      MISE EN PAGE
      ================================================================ */
   .app{
-    position:relative;height:100%;
+    position:relative;
+    height:100vh;
+    height:100dvh;
+    max-height:100dvh;
     display:flex;flex-direction:column;
     padding:calc(env(safe-area-inset-top,0px) + 14px) 14px calc(env(safe-area-inset-bottom,0px) + 10px);
     transition:background .35s ease;
     max-width:100%;overflow-x:hidden;
+    overflow-y:hidden;
   }
 
-  .sky-layer{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s ease}
+  .sky-layer{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:1;transition:opacity .8s ease}
   .sky-layer.on{opacity:1}
 
   .sun-cele{
@@ -196,8 +200,11 @@
   .subtitle.on-dark{color:#f5cdd0}
 
   main{
-    flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;
-    position:relative;z-index:2;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px;
+    flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;
+    position:relative;z-index:2;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:4px;
+    /* la barre du bas reste toujours visible : on ne reserve pas sa hauteur ici */
   }
 
   .view{display:none;flex-direction:column;gap:16px}
@@ -312,6 +319,12 @@
   .b-date .dn{font-size:60px;font-weight:900;line-height:1;color:#ece6da;margin:2px 0;
     text-shadow:0 2px 0 #141416,0 6px 16px rgba(0,0,0,.7)}
   .b-date .dm{font-size:16px;font-weight:900;letter-spacing:1.5px;color:var(--accent-2);text-transform:uppercase}
+  .count-line{
+    margin-top:12px;display:inline-flex;align-items:center;gap:6px;
+    font-size:11px;font-weight:800;letter-spacing:.4px;color:var(--primary);
+    max-width:94%;line-height:1.25;text-align:center;
+  }
+  .count-line .clip{font-size:13px;filter:grayscale(.2)}
 
   /* ---------- MÉTÉO ---------- */
   .wx-hero{display:flex;flex-direction:column;align-items:center;gap:14px}
@@ -400,13 +413,32 @@
   }
   .agenda-form > .inner{overflow:hidden}
   .agenda-form.open{grid-template-rows:1fr;opacity:1;margin-top:2px}
-  /* date + heure côte à côte, en petites bulles */
-  .mini-fields{display:flex;gap:12px}
-  .mini-fields .field{flex:1 1 0;min-width:0;margin-bottom:0;padding:13px 10px}
-  .mini-fields .field input{font-size:14.5px}
+  /* date et heure : deux petites bulles côte à côte, valeurs empilées */
+  .mini-fields{display:flex;gap:12px;justify-content:center}
+  .stack-field{
+    flex:0 0 auto;
+    width:104px;min-height:104px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+    padding:12px 8px;
+    background-color:#212125;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='sf'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='5' seed='11'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23sf)' opacity='0.55'/></svg>");
+    background-blend-mode:overlay;
+    box-shadow:inset 0 4px 9px rgba(0,0,0,.88), inset 0 -1px 0 rgba(255,255,255,.12);
+    cursor:pointer;
+  }
+  .stack-field:nth-child(1){border-radius:var(--blob-b)}
+  .stack-field:nth-child(2){border-radius:var(--blob-c)}
+  .stack-val{
+    font-size:22px;font-weight:900;line-height:1.05;color:#ece6da;
+    text-shadow:0 2px 0 #141416,0 4px 10px rgba(0,0,0,.6);
+  }
+  .stack-val.sm{font-size:14px;color:var(--accent-2);letter-spacing:.5px}
+  .sr-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 
   /* bouton d'enregistrement : petit rond, juste un + */
   .fab-save{width:76px;height:76px;font-size:36px}
+  .fab-refresh{width:66px;height:66px;font-size:30px}
 
   .agenda-form .form-bare{padding:0}
   /* pas de plaque derrière : les ovales flottent sur le fond */
@@ -461,9 +493,23 @@
     min-height:140px;padding:16px 18px;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:6px;text-align:center;position:relative;
+    cursor:pointer;
   }
-  .note-card .meta{font-size:10.5px;font-weight:900;letter-spacing:.8px;
-    color:var(--primary);text-transform:uppercase}
+  /* au repos : seule l'ampoule est visible */
+  .note-card .bulb{font-size:38px;line-height:1;transition:transform .22s ease}
+  .note-card:active .bulb{transform:scale(.92)}
+  /* le texte reste caché tant qu'on n'a pas ouvert la note */
+  .note-card .reveal{display:none}
+  .note-card.open{min-height:0;padding:22px 18px}
+  .note-card.open .bulb{display:none}
+  .note-card.open .reveal{display:block}
+  .note-card .meta{
+    font-size:10.5px;font-weight:900;letter-spacing:.8px;
+    color:var(--primary);text-transform:uppercase;display:none;
+  }
+  .note-card.open .meta{display:block}
+  .note-card .del{display:none}
+  .note-card.open .del{display:block}
   .note-card .txt{font-size:14.5px;font-weight:700;color:var(--accent-2);line-height:1.4;
     white-space:pre-wrap;word-break:break-word}
   .note-card .del{
@@ -561,80 +607,130 @@
   }
   .crosser.go{opacity:1}
 
-  /* ---------- AVIONS : trois trajectoires differentes ---------- */
-  .plane{font-size:26px;left:-80px;
-    filter:drop-shadow(0 3px 6px rgba(60,40,52,.35));}
-  .plane.p1{top:18%}
-  .plane.p2{top:34%;font-size:20px}
-  .plane.p3{top:26%;font-size:23px}
+  /* ---------- DECORS ANIMES ---------- */
+  .crosser{position:fixed;z-index:1;pointer-events:none;opacity:0;will-change:transform,opacity}
+  .crosser.go{opacity:1}
 
-  /* 1. de gauche a droite, legere montee */
-  .plane.p1.go{animation:fly1 9s linear forwards}
+  /* --- avions : 3 couleurs, 3 trajectoires, plus bas dans l'ecran --- */
+  .plane{font-size:24px;filter:drop-shadow(0 3px 6px rgba(60,40,52,.30))}
+  .plane .body{display:block;font-size:24px;line-height:1}
+  .plane.blue .body{filter:hue-rotate(155deg) saturate(1.6)}
+  .plane.red  .body{filter:hue-rotate(300deg) saturate(1.7)}
+  .plane.green .body{filter:hue-rotate(60deg) saturate(1.5)}
+
+  .plane.p1{top:62%;left:-80px}
+  .plane.p2{top:74%;left:-80px;font-size:19px}
+  .plane.p3{top:54%;left:-80px;font-size:21px}
+
+  .plane.p1.go{animation:fly1 10s linear forwards}
   @keyframes fly1{
-    0%  {transform:translate(-10vw,8vh) rotate(-6deg);opacity:0}
+    0%  {transform:translate(-10vw,4vh) rotate(-6deg);opacity:0}
     8%  {opacity:1} 92%{opacity:1}
-    100%{transform:translate(114vw,-5vh) rotate(-4deg);opacity:0}
+    100%{transform:translate(114vw,-3vh) rotate(-4deg);opacity:0}
   }
-  /* 2. de droite a gauche, plus bas, legerement descendant */
-  .plane.p2.go{animation:fly2 11s linear forwards}
+  .plane.p2.go{animation:fly2 12s linear forwards}
   @keyframes fly2{
-    0%  {transform:translate(112vw,-2vh) rotate(180deg) scaleX(-1);opacity:0}
+    0%  {transform:translate(112vw,2vh) rotate(180deg) scaleX(-1);opacity:0}
     8%  {opacity:1} 92%{opacity:1}
-    100%{transform:translate(-12vw,10vh) rotate(180deg) scaleX(-1);opacity:0}
+    100%{transform:translate(-12vw,-4vh) rotate(180deg) scaleX(-1);opacity:0}
   }
-  /* 3. en diagonale montante, du bas-gauche vers le haut-droite */
-  .plane.p3.go{animation:fly3 13s linear forwards}
+  .plane.p3.go{animation:fly3 14s linear forwards}
   @keyframes fly3{
-    0%  {transform:translate(-8vw,34vh) rotate(-22deg);opacity:0}
+    0%  {transform:translate(-8vw,14vh) rotate(-24deg);opacity:0}
     8%  {opacity:1} 92%{opacity:1}
-    100%{transform:translate(108vw,-16vh) rotate(-18deg);opacity:0}
+    100%{transform:translate(108vw,-14vh) rotate(-20deg);opacity:0}
   }
 
-  /* ---------- ÉTOILES FILANTES : traînée horizontale, deux sens ---------- */
-  .shooting{height:3px;}
+  /* --- oiseaux (aube) : petits, en V, plus haut --- */
+  .birds{top:30%;left:-90px;font-size:16px;
+    filter:drop-shadow(0 2px 4px rgba(60,40,52,.28));pointer-events:none}
+  .birds .flock{display:inline-block;letter-spacing:-3px}
+  .birds.b1.go{animation:birds1 11s linear forwards}
+  @keyframes birds1{
+    0%  {transform:translate(-12vw,6vh) rotate(-5deg);opacity:0}
+    10% {opacity:1} 90%{opacity:1}
+    100%{transform:translate(114vw,-6vh) rotate(-3deg);opacity:0}
+  }
+  .birds.b2{top:22%;left:-90px;font-size:13px}
+  .birds.b2.go{animation:birds2 13s linear forwards}
+  @keyframes birds2{
+    0%  {transform:translate(112vw,4vh) rotate(180deg) scaleX(-1);opacity:0}
+    10% {opacity:1} 90%{opacity:1}
+    100%{transform:translate(-12vw,-2vh) rotate(180deg) scaleX(-1);opacity:0}
+  }
+
+  /* --- étoiles filantes : diagonale, en haut ET dans le bas --- */
+  .shooting{height:3px}
   .shooting .head{
-    position:absolute;top:-2px;width:8px;height:8px;border-radius:50%;
+    position:absolute;top:-2px;width:7px;height:7px;border-radius:50%;
     background:radial-gradient(circle,#fff,rgba(255,255,255,.65) 45%,transparent 74%);
     box-shadow:0 0 14px 5px rgba(255,255,255,.72);
   }
-  .shooting .tail{
-    position:absolute;top:0;height:3px;border-radius:3px;
+  .shooting .tail{position:absolute;top:0;height:2.5px;border-radius:3px;
     background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.9));
-  }
+    transform:rotate(22deg);transform-origin:right center}
 
-  /* A. de gauche a droite, quasi horizontale */
-  .shooting.s1{top:22%;left:-160px}
+  /* A. du haut-gauche vers le bas-droite */
+  .shooting.s1{top:8%;left:-170px}
   .shooting.s1 .head{right:0}
-  .shooting.s1 .tail{right:6px;width:150px;
-    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.9))}
-  .shooting.s1.go{animation:streak1 2.8s linear forwards}
-  @keyframes streak1{
+  .shooting.s1 .tail{right:6px;width:140px;transform:rotate(22deg);transform-origin:right center}
+  .shooting.s1.go{animation:dia1 3s linear forwards}
+  @keyframes dia1{
     0%  {transform:translate(0,0);opacity:0}
-    10% {opacity:1} 72%{opacity:1}
-    100%{transform:translate(126vw,0);opacity:0}
+    8%  {opacity:1} 80%{opacity:1}
+    100%{transform:translate(122vw,46vh);opacity:0}
   }
-
-  /* B. de droite a gauche, un peu plus bas : quinconce */
-  .shooting.s2{top:52%;right:-160px}
+  /* B. du haut-droite vers le bas-gauche */
+  .shooting.s2{top:26%;right:-170px}
   .shooting.s2 .head{left:0}
-  .shooting.s2 .tail{left:6px;width:150px;
-    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.9))}
-  .shooting.s2.go{animation:streak2 2.8s linear forwards}
-  @keyframes streak2{
+  .shooting.s2 .tail{left:6px;width:140px;
+    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.9));
+    transform:rotate(-22deg);transform-origin:left center}
+  .shooting.s2.go{animation:dia2 3s linear forwards}
+  @keyframes dia2{
     0%  {transform:translate(0,0);opacity:0}
-    10% {opacity:1} 72%{opacity:1}
-    100%{transform:translate(-126vw,0);opacity:0}
+    8%  {opacity:1} 80%{opacity:1}
+    100%{transform:translate(-122vw,40vh);opacity:0}
+  }
+  /* C. dans le BAS de l'ecran, du bas-gauche vers la droite */
+  .shooting.s3{top:72%;left:-170px}
+  .shooting.s3 .head{right:0}
+  .shooting.s3 .tail{right:6px;width:110px;transform:rotate(-14deg);transform-origin:right center}
+  .shooting.s3.go{animation:dia3 3.4s linear forwards}
+  @keyframes dia3{
+    0%  {transform:translate(0,0);opacity:0}
+    8%  {opacity:1} 80%{opacity:1}
+    100%{transform:translate(122vw,-16vh);opacity:0}
+  }
+  /* D. dans le bas, sens inverse */
+  .shooting.s4{top:84%;right:-170px}
+  .shooting.s4 .head{left:0}
+  .shooting.s4 .tail{left:6px;width:100px;transform:rotate(16deg);transform-origin:left center}
+  .shooting.s4.go{animation:dia4 3.8s linear forwards}
+  @keyframes dia4{
+    0%  {transform:translate(0,0);opacity:0}
+    8%  {opacity:1} 80%{opacity:1}
+    100%{transform:translate(-122vw,-22vh);opacity:0}
   }
 
-  /* C. une troisieme, plus haute, plus petite, sens inverse */
-  .shooting.s3{top:70%;right:-160px;transform:scale(.7)}
-  .shooting.s3 .head{left:0}
-  .shooting.s3 .tail{left:6px;width:110px;
-    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.8))}
-  .shooting.s3.go{animation:streak2 3.4s linear forwards}
+  /* --- lucioles (crépuscule) : points qui montent en vacillant --- */
+  .firefly{
+    position:fixed;z-index:1;pointer-events:none;width:5px;height:5px;border-radius:50%;
+    background:radial-gradient(circle,#fff8c0,rgba(255,230,140,.85) 45%,transparent 72%);
+    box-shadow:0 0 10px 3px rgba(255,225,130,.75);
+    opacity:0;
+  }
+  .firefly.go{animation:drift 6s ease-out forwards}
+  @keyframes drift{
+    0%  {transform:translate(0,0) scale(.6);opacity:0}
+    15% {opacity:.95}
+    50% {transform:translate(6vw,-6vh) scale(1.1);opacity:.8}
+    85% {opacity:.7}
+    100%{transform:translate(12vw,-14vh) scale(.7);opacity:0}
+  }
 
   @media (prefers-reduced-motion:reduce){
-    .plane.go,.shooting.go{animation:none;opacity:0}
+    .crosser.go,.firefly.go{animation:none;opacity:0}
   }
 
 
@@ -673,13 +769,32 @@
     <div class="stars" id="stars"></div>
     <div class="sun-cele" id="sunCele"></div>
     <div class="moon" id="moon"></div>
-    <span class="crosser plane p1" id="plane1" aria-hidden="true">✈️</span>
-    <span class="crosser plane p2" id="plane2" aria-hidden="true">✈️</span>
-    <span class="crosser plane p3" id="plane3" aria-hidden="true">✈️</span>
+    <span class="crosser plane p1 blue" id="plane1" aria-hidden="true"><span class="body">✈️</span></span>
+    <span class="crosser plane p2 red" id="plane2" aria-hidden="true"><span class="body">✈️</span></span>
+    <span class="crosser plane p3 green" id="plane3" aria-hidden="true"><span class="body">✈️</span></span>
+
+    <span class="crosser birds b1" id="birds1" aria-hidden="true"><span class="flock">🕊️🕊️</span></span>
+    <span class="crosser birds b2" id="birds2" aria-hidden="true"><span class="flock">🕊️</span></span>
 
     <span class="crosser shooting s1" id="shoot1" aria-hidden="true">
       <span class="tail"></span><span class="head"></span>
     </span>
+    <span class="crosser shooting s2" id="shoot2" aria-hidden="true">
+      <span class="tail"></span><span class="head"></span>
+    </span>
+    <span class="crosser shooting s3" id="shoot3" aria-hidden="true">
+      <span class="tail"></span><span class="head"></span>
+    </span>
+    <span class="crosser shooting s4" id="shoot4" aria-hidden="true">
+      <span class="tail"></span><span class="head"></span>
+    </span>
+
+    <span class="firefly" id="ff1" aria-hidden="true"></span>
+    <span class="firefly" id="ff2" aria-hidden="true"></span>
+    <span class="firefly" id="ff3" aria-hidden="true"></span>
+    <span class="firefly" id="ff4" aria-hidden="true"></span>
+    <span class="firefly" id="ff5" aria-hidden="true"></span>
+    <span class="firefly" id="ff6" aria-hidden="true"></span>
     <span class="crosser shooting s2" id="shoot2" aria-hidden="true">
       <span class="tail"></span><span class="head"></span>
     </span>
@@ -711,11 +826,9 @@
           <div class="dw" id="ckDw">MER.</div>
           <div class="dn" id="ckDn">--</div>
           <div class="dm" id="ckDm">—</div>
-          <div style="margin-top:8px">
-            <span class="clock-badge"><span id="clockSkyIcon">✨</span> <span id="clockSky">Le ciel suit l'heure</span></span>
-          </div>
-          <div style="margin-top:10px;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--primary)">
-            <span id="homeCount">0</span> ÉVÉNEMENT(S)
+          <div class="count-line">
+            <span class="clip" aria-hidden="true">📎</span>
+            <span><span id="homeCount">0</span> <span id="homeCountLabel">événement enregistré</span></span>
           </div>
         </div>
       </div>
@@ -752,9 +865,11 @@
 
       <div class="wx-meta" id="wxMeta">—</div>
 
-      <button class="btn-carve" id="wxRefresh" type="button">
-        <span class="plus" aria-hidden="true">↻</span><span>Actualiser</span>
-      </button>
+      <div class="agenda-head">
+        <button class="fab-plus fab-save fab-refresh" id="wxRefresh" type="button" aria-label="Actualiser la météo">
+          <span aria-hidden="true">↻</span>
+        </button>
+      </div>
     </section>
 
     <!-- ================= AGENDA ================= -->
@@ -774,11 +889,17 @@
                      placeholder="Titre de l'événement" aria-label="Titre de l'événement">
             </div>
             <div class="mini-fields">
-              <div class="field">
-                <input id="date" type="date" aria-label="Date de l'événement">
+              <div class="stack-field" id="dateStack" role="group" aria-label="Date de l'événement">
+                <div class="stack-val" id="stDay">28</div>
+                <div class="stack-val sm" id="stMonth">Oct.</div>
+                <div class="stack-val sm" id="stYear">26</div>
+                <input id="date" type="date" class="sr-hidden" aria-label="Date de l'événement">
               </div>
-              <div class="field">
-                <input id="heure" type="time" aria-label="Heure de l'événement">
+
+              <div class="stack-field" id="timeStack" role="group" aria-label="Heure de l'événement">
+                <div class="stack-val" id="stHour">19</div>
+                <div class="stack-val" id="stMin">11</div>
+                <input id="heure" type="time" class="sr-hidden" aria-label="Heure de l'événement">
               </div>
             </div>
             <div class="agenda-head" style="margin-top:6px">
@@ -915,7 +1036,7 @@
   var $skyModes=document.getElementById("skyModes"), $prenom=document.getElementById("prenom");
   var $settingsGrid=document.getElementById("settingsGrid");
   var $clockHello=document.getElementById("clockHello"), $clockSky=document.getElementById("clockSky");
-  var $clockSkyIcon=document.getElementById("clockSkyIcon");
+  var $clockSkyIcon=null;
   var $ckH=document.getElementById("ckH"), $ckM=document.getElementById("ckM"), $ckS=document.getElementById("ckS");
   var $ckDw=document.getElementById("ckDw"), $ckDn=document.getElementById("ckDn"), $ckDm=document.getElementById("ckDm");
 
@@ -1046,7 +1167,10 @@
   });
 
   function renderHome(){
-    $homeCount.textContent=String(loadEvents().length);
+    var nb=loadEvents().length;
+    $homeCount.textContent=String(nb);
+    var lab=document.getElementById("homeCountLabel");
+    if(lab) lab.textContent = nb>1 ? "événements enregistrés" : "événement enregistré";
     var p=loadStr(NAME_KEY,"").trim();
     $clockHello.textContent = p ? ("Bonjour "+p) : "Bienvenue";
   }
@@ -1064,11 +1188,17 @@
       var shapes=["var(--blob-b)","var(--blob-c)","var(--blob-d)","var(--blob-a)"];
       card.style.borderRadius=shapes[idx%4];
 
+      var bulb=document.createElement("div"); bulb.className="bulb";
+      bulb.textContent="💡";
+
       var meta=document.createElement("div"); meta.className="meta";
       meta.textContent=relativeNote(n.ts);
 
       var txt=document.createElement("div"); txt.className="txt";
       txt.textContent=n.texte;
+
+      var reveal=document.createElement("div"); reveal.className="reveal";
+      reveal.appendChild(meta); reveal.appendChild(txt);
 
       var del=document.createElement("button"); del.className="del"; del.type="button";
       del.setAttribute("aria-label","Supprimer la note");
@@ -1081,7 +1211,21 @@
         },190);
       });
 
-      card.appendChild(meta); card.appendChild(txt); card.appendChild(del);
+      card.appendChild(bulb); card.appendChild(reveal); card.appendChild(del);
+
+      /* un clic révèle la note, un second la referme */
+      card.addEventListener("click",function(e){
+        if(e.target.closest(".del")) return;
+        var on=card.classList.toggle("open");
+        card.setAttribute("aria-expanded",on?"true":"false");
+      });
+      card.setAttribute("role","button");
+      card.setAttribute("tabindex","0");
+      card.setAttribute("aria-expanded","false");
+      card.addEventListener("keydown",function(e){
+        if(e.key==="Enter"||e.key===" "){ e.preventDefault(); card.click(); }
+      });
+
       $notesList.appendChild(card);
     });
   }
@@ -1242,11 +1386,9 @@
     document.documentElement.style.setProperty("--accent",th.accent);
 
     var isAuto=(currentTheme==="auto");
-    var onHome=(currentView==="accueil");
+    var onHome=true;   /* le fond du ciel s'applique a TOUTES les pages */
 
-    var ICONS={aube:"🌅",jour:"☀️",coucher:"🌇",crepuscule:"🌆",nuit:"🌙"};
-    $clockSkyIcon.textContent=ICONS[t]||"✨";
-    $clockSky.textContent = isAuto ? ("Auto · "+th.skyName) : th.skyName;
+    /* le badge de type de ciel est supprime : plus rien a mettre a jour ici */
 
     $skyLayer.classList.toggle("on",onHome);
 
@@ -1303,36 +1445,64 @@
   }
   setInterval(function(){ if(currentTheme==="auto") applySky(); },60000);
 
-  /* ---------- traversées : avions le jour, étoiles filantes la nuit ---------- */
-  var PLANES=["plane1","plane2","plane3"].map(function(id){ return document.getElementById(id); });
-  var SHOOTS=["shoot1","shoot2","shoot3"].map(function(id){ return document.getElementById(id); });
+  /* ---------- décors animés, un par thème ---------- */
+  function byId(id){ return document.getElementById(id); }
+  var PLANES=[byId("plane1"),byId("plane2"),byId("plane3")];
+  var BIRDS=[byId("birds1"),byId("birds2")];
+  var SHOOTS=[byId("shoot1"),byId("shoot2"),byId("shoot3"),byId("shoot4")];
+  var FIREFLIES=[byId("ff1"),byId("ff2"),byId("ff3"),byId("ff4"),byId("ff5"),byId("ff6")];
   var crosserTimer=null;
 
   function restart(el){
     if(!el) return;
     el.classList.remove("go");
-    void el.offsetWidth;          /* force le redémarrage de l'animation */
+    void el.offsetWidth;
     el.classList.add("go");
   }
 
+  function clearFireflies(){
+    FIREFLIES.forEach(function(f){
+      if(f){ f.classList.remove("go"); f.style.opacity=""; f.style.left=""; f.style.top=""; }
+    });
+  }
+
   function launchCrosser(){
-    if(currentView!=="accueil") return;   /* seulement sur l'Accueil */
     var t=effectiveTheme();
-    var isDay=(t==="jour" || t==="coucher" || t==="aube");
-    if(isDay){
-      restart(PLANES[0]);                     /* gauche -> droite */
-      if(PLANES[1]) setTimeout(function(){ restart(PLANES[1]); }, 2200);   /* droite -> gauche */
-      if(PLANES[2]) setTimeout(function(){ restart(PLANES[2]); }, 5200);   /* diagonale montante */
-    }else{
-      restart(SHOOTS[0]);                     /* traînée vers la droite */
-      if(SHOOTS[1]) setTimeout(function(){ restart(SHOOTS[1]); }, 1400);   /* en quinconce, vers la gauche */
-      if(SHOOTS[2]) setTimeout(function(){ restart(SHOOTS[2]); }, 3600);
+    clearFireflies();
+
+    if(t==="aube"){
+      restart(BIRDS[0]);
+      if(BIRDS[1]) setTimeout(function(){ restart(BIRDS[1]); }, 3200);
+      return;
     }
+    if(t==="jour" || t==="coucher"){
+      restart(PLANES[0]);
+      if(PLANES[1]) setTimeout(function(){ restart(PLANES[1]); }, 2400);
+      if(PLANES[2]) setTimeout(function(){ restart(PLANES[2]); }, 5600);
+      return;
+    }
+    if(t==="crepuscule"){
+      /* lucioles : apparaissent a des endroits varies et montent en vacillant */
+      FIREFLIES.forEach(function(f,i){
+        if(!f) return;
+        setTimeout(function(){
+          f.style.left=(8+Math.random()*80)+"vw";
+          f.style.top=(45+Math.random()*45)+"vh";
+          restart(f);
+        }, i*700);
+      });
+      return;
+    }
+    /* nuit */
+    restart(SHOOTS[0]);
+    if(SHOOTS[1]) setTimeout(function(){ restart(SHOOTS[1]); }, 1200);
+    if(SHOOTS[2]) setTimeout(function(){ restart(SHOOTS[2]); }, 2600);
+    if(SHOOTS[3]) setTimeout(function(){ restart(SHOOTS[3]); }, 4200);
   }
 
   function scheduleCrossers(){
     if(crosserTimer) clearInterval(crosserTimer);
-    setTimeout(launchCrosser,3000);
+    setTimeout(launchCrosser,2500);
     crosserTimer=setInterval(launchCrosser,15000);   /* un passage toutes les 15 s */
   }
 
