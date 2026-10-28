@@ -728,11 +728,27 @@
   .heli.h2{top:80%;font-size:17px;filter:hue-rotate(210deg) saturate(1.4)}
   .heli.h3{top:92%;font-size:18px;filter:hue-rotate(120deg) saturate(1.3)}
   .heli.h4{top:84%;font-size:15px;filter:hue-rotate(320deg) saturate(1.4)}
-  .heli.go{animation:hoover 9s ease-out forwards}
-  @keyframes hoover{
+  /* deux montent de gauche a droite, deux descendent de droite a gauche */
+  .heli.go{animation:hooverUp 9s ease-out forwards}
+  @keyframes hooverUp{
     0%  {transform:translate(-14vw,6vh) rotate(-6deg);opacity:0}
     8%  {opacity:1} 90%{opacity:1}
     100%{transform:translate(112vw,-52vh) rotate(-8deg);opacity:0}
+  }
+  .heli.h3.go{animation:hooverDown 10s ease-out forwards}
+  /* h4 : montée franche depuis le coin bas-gauche */
+  .heli.h4{top:92%;font-size:15px;filter:hue-rotate(320deg) saturate(1.4)}
+  /* descend de droite a gauche */
+  @keyframes hooverDown{
+    0%  {transform:translate(114vw,6vh) rotate(0deg) scaleX(-1);opacity:0}
+    8%  {opacity:1} 90%{opacity:1}
+    100%{transform:translate(-14vw,-40vh) rotate(-6deg) scaleX(-1);opacity:0}
+  }
+  .heli.h4.go{animation:hooverDiag 8s ease-out forwards}
+  @keyframes hooverDiag{
+    0%  {transform:translate(-10vw,48vh) rotate(-28deg);opacity:0}
+    8%  {opacity:1} 90%{opacity:1}
+    100%{transform:translate(110vw,-34vh) rotate(-24deg);opacity:0}
   }
 
   /* --- hiboux (coucher) --- */
@@ -756,9 +772,14 @@
     position:fixed;z-index:1;pointer-events:none;font-size:18px;line-height:1;opacity:0;
     filter:drop-shadow(0 0 6px rgba(200,220,255,.6));
   }
-  /* le satellite reste haut, la soucoupe navigue plus bas en zigzag */
-  .sat.st1{top:12%}
-  .sat.st2{top:76%;font-size:20px}
+  /* trois altitudes differentes, pour satellites comme soucoupes */
+  .sat.st1{top:10%}
+  .sat.st3{top:44%;font-size:16px}
+  .sat.st5{top:66%;font-size:15px}
+  .sat.st2{top:74%;font-size:20px}
+  .sat.st4{top:30%;font-size:17px}
+  .sat.st6{top:88%;font-size:15px}
+  .sat.go.rev{animation-direction:reverse}
   .sat.go{animation:orbit 17s linear forwards}
   @keyframes orbit{
     0%  {transform:translate(-12vw,8vh) rotate(8deg);opacity:0}
@@ -816,21 +837,35 @@
   }
 
   /* --- étoiles filantes (nuit) : plus nombreuses, dont le bas --- */
-  .shooting{height:3px}
-  .shooting .head{
-    position:absolute;top:-2px;width:7px;height:7px;border-radius:50%;
-    background:radial-gradient(circle,#fff,rgba(255,255,255,.7) 45%,transparent 74%);
-    box-shadow:0 0 16px 6px rgba(255,255,255,.8);
+  /* la tete et la queue partagent le meme axe : plus de decalage */
+  .shooting{
+    height:0;width:0;position:fixed;
   }
+  .shooting .head{
+    position:absolute;left:0;top:0;
+    width:8px;height:8px;margin-left:-4px;margin-top:-4px;
+    border-radius:50%;
+    background:radial-gradient(circle,#fff,rgba(255,255,255,.75) 45%,transparent 76%);
+    box-shadow:0 0 16px 6px rgba(255,255,255,.85);
+  }
+  /* La queue part de la tete et remonte vers la gauche.
+     On tourne l'ensemble avec le meme angle que la trajectoire. */
   .shooting .tail{
-    position:absolute;top:0;height:2.5px;border-radius:3px;
+    position:absolute;right:0;top:0;
+    width:150px;height:2.5px;transform-origin:right center;
+    border-radius:3px;
+    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.95));
+    transform:translateY(-1px) rotate(0deg);
+  }
+  /* sens de la course : queue vers la droite (deplacement vers la gauche) */
+  .shooting.rev .tail{
+    left:0;right:auto;transform-origin:left center;
     background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95));
-    transform:rotate(22deg);transform-origin:right center;
+    transform:translateY(-1px) rotate(0deg);
   }
 
   /* A. haut-gauche -> bas-droite */
   .shooting.s1{top:6%;left:-170px}
-  .shooting.s1 .head{right:0}
   .shooting.s1 .tail{right:6px;width:140px}
   .shooting.s1.go{animation:dia1 3.2s linear forwards}
   @keyframes dia1{
@@ -840,7 +875,6 @@
   }
   /* B. haut-droite -> bas-gauche, longue traversée */
   .shooting.s2{top:12%;right:-170px}
-  .shooting.s2 .head{left:0}
   .shooting.s2 .tail{left:6px;width:170px;
     background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.95));
     transform:rotate(-22deg);transform-origin:left center}
@@ -852,7 +886,6 @@
   }
   /* C. dans le BAS : bas-gauche -> droite */
   .shooting.s3{top:74%;left:-170px}
-  .shooting.s3 .head{right:0}
   .shooting.s3 .tail{right:6px;width:120px;transform:rotate(-12deg)}
   .shooting.s3.go{animation:dia3 3.6s linear forwards}
   @keyframes dia3{
@@ -862,7 +895,6 @@
   }
   /* D. dans le BAS, sens inverse */
   .shooting.s4{top:86%;right:-170px}
-  .shooting.s4 .head{left:0}
   .shooting.s4 .tail{left:6px;width:110px;transform:rotate(14deg)}
   .shooting.s4.go{animation:dia4 4s linear forwards}
   @keyframes dia4{
@@ -872,7 +904,6 @@
   }
   /* E. une cinquième, depuis le coin haut-droit, très longue */
   .shooting.s5{top:34%;right:-170px}
-  .shooting.s5 .head{left:0}
   .shooting.s5 .tail{left:6px;width:150px;
     background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.9));
     transform:rotate(-26deg);transform-origin:left center}
@@ -941,7 +972,11 @@
     <span class="owl ow3" id="owl3" aria-hidden="true">🦉</span>
 
     <span class="sat st1" id="sat1" aria-hidden="true">🛰️</span>
+    <span class="sat st3" id="sat3" aria-hidden="true">🛰️</span>
+    <span class="sat st5" id="sat5" aria-hidden="true">🛰️</span>
     <span class="sat st2" id="sat2" aria-hidden="true">🛸</span>
+    <span class="sat st4" id="sat4" aria-hidden="true">🛸</span>
+    <span class="sat st6" id="sat6" aria-hidden="true">🛸</span>
 
     <span class="bat c1" id="bat1" aria-hidden="true">🦇</span>
     <span class="bat c2" id="bat2" aria-hidden="true">🦇</span>
@@ -1687,7 +1722,7 @@
   var LADYBUGS   = ids("lady",3);
   var HELIS      = ids("heli",4);
   var OWLS       = ids("owl",3);
-  var SATS       = ids("sat",2);
+  var SATS       = ids("sat",6);
   var crosserTimer=null;
 
   function restart(el){
@@ -1786,12 +1821,16 @@
       scatterStars(TWINKLES,8);
       restart(SHOOTS[0]);
       setTimeout(function(){ restart(SHOOTS[1]); }, 900);
-      setTimeout(function(){ restart(SATS[0]); }, 1800);
-      setTimeout(function(){ restart(SHOOTS[2]); }, 2900);
-      setTimeout(function(){ restart(SHOOTS[3]); }, 3900);
-      setTimeout(function(){ restart(SATS[1]); }, 3200);
-      setTimeout(function(){ restart(SHOOTS[4]); }, 4600);
-      setTimeout(function(){ restart(SHOOTS[1]); }, 7000);
+      setTimeout(function(){ restart(SATS[0]); }, 1400);
+      setTimeout(function(){ restart(SHOOTS[2]); }, 2400);
+      setTimeout(function(){ restart(SATS[1]); }, 3400);
+      setTimeout(function(){ restart(SHOOTS[3]); }, 4200);
+      setTimeout(function(){ restart(SATS[2]); }, 5200);
+      setTimeout(function(){ restart(SHOOTS[4]); }, 6200);
+      setTimeout(function(){ restart(SATS[3]); }, 7400);
+      setTimeout(function(){ restart(SHOOTS[1]); }, 8400);
+      setTimeout(function(){ restart(SATS[4]); }, 9600);
+      setTimeout(function(){ restart(SATS[5]); }, 10800);
     }catch(e){ /* un décor qui échoue ne doit pas casser l'app */ }
   }
 
@@ -1809,7 +1848,7 @@
   });
 
   /* ---------- RÉGLAGES ---------- */
-  var SETTINGS=[["🎨","Apparence","Marbre & pierre"],["🔔","Notifications","Activées"],
+  var SETTINGS=[["🎨","Apparence","Choisir l'ambiance"],
     ["🌍","Langue","Français"],["📅","Calendrier","Semaine"],
     ["💾","Données locales","Sauvegardées"],["ℹ️","À propos","ToKnow v2"],
     ["🧹","Tout effacer","Supprime tout"],["📤","Exporter","Bientôt"]];
@@ -1998,10 +2037,9 @@
   /* ---------- tuiles ---------- */
   var SETTINGS=[
     ["🎨","Apparence","Choisir l'ambiance"],
-    ["🔔","Notifications","Activées"],
     ["📤","Exporter en .json","Toutes les données"],
     ["📄","Exporter en .txt","Version lisible"],
-    ["📥","Importer","Bientôt"],
+    ["📥","Importer","Depuis un fichier"],
     ["🧹","Tout effacer","Supprime tout"]
   ];
 
