@@ -58,7 +58,33 @@
     --radius:26px;
     --radius-sm:22px;
     --font:"Sogea","Poppins","Montserrat",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+
+    /* ---- FORMES "LAVA BUBBLES" ----
+       Des rayons tres inegaux sur les quatre coins : la silhouette ondule
+       au lieu d'etre un rectangle regulier. Trois variantes pour que deux
+       bulles voisines ne se ressemblent jamais. */
+    --bubble-a:58% 42% 46% 54% / 44% 56% 44% 56%;
+    --bubble-b:42% 58% 54% 46% / 56% 44% 56% 44%;
+    --bubble-c:52% 48% 60% 40% / 48% 52% 48% 52%;
   }
+
+  /* --- silhouettes lava bubbles, appliquees par-dessus le rayon de base --- */
+  .carve,.clock,.wood,.paper{
+    border-radius:var(--bubble-a);
+  }
+  /* le contenu respire : une bulle n'a pas d'angles pour le tenir */
+  .carve,.clock{padding-left:22px;padding-right:22px}
+
+  /* variantes : on alterne pour casser la regularite */
+  .view > *:nth-child(2n) .carve,
+  .view > *:nth-child(2n),
+  .list > *:nth-child(2n){border-radius:var(--bubble-b)}
+  .view > *:nth-child(3n),
+  .list > *:nth-child(3n){border-radius:var(--bubble-c)}
+
+  /* les champs et boutons internes suivent le mouvement, en plus doux */
+  .field{border-radius:46% 54% 50% 50% / 52% 48% 52% 48%}
+  .btn-carve{border-radius:50% 50% 46% 54% / 56% 44% 52% 48%}
 
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
