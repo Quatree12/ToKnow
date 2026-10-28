@@ -184,7 +184,7 @@
   header{position:relative;z-index:2;padding:2px 4px 14px}
 
   h1{
-    margin:0;font-size:42px;line-height:1;font-weight:900;letter-spacing:1.5px;
+    margin:0;font-size:30px;line-height:1;font-weight:900;letter-spacing:1.3px;
     text-transform:uppercase;
     background-image:linear-gradient(180deg,#3a2c34,#1a1218);
     -webkit-background-clip:text;background-clip:text;color:transparent;
@@ -306,7 +306,7 @@
   .del svg{display:block}
 
   /* ---------- météo ---------- */
-  .weather{padding:22px 20px;text-align:center}
+  .weather{padding:26px 20px;text-align:center}
   .weather .place{
     font-size:14px;font-weight:800;letter-spacing:1.1px;
     color:var(--primary);position:relative;z-index:1;
@@ -452,7 +452,9 @@
   /* ================================================================
      TAB BAR — bouton MÉTABALL, couleur du thème
      ================================================================ */
-  .tabbar-wrap{position:relative;z-index:3;margin-top:10px;padding-top:16px;isolation:isolate}
+  /* pas de padding-top : la goutte doit rester ENTIÈREMENT dans la barre,
+     sinon son bord supérieur dépasse et apparaît comme une tache rose */
+  .tabbar-wrap{position:relative;z-index:3;margin-top:10px;isolation:isolate}
 
   .blob{
     position:absolute;top:0;left:0;height:64px;width:64px;
@@ -570,7 +572,7 @@
           <div class="clock-day" id="ckDay">—</div>
         </div>
         <div style="text-align:center">
-          <span class="clock-badge">🌙 <span id="clockSky">Le ciel affiche : —</span></span>
+          <span class="clock-badge"><span id="clockSkyIcon">🌙</span> <span id="clockSky">Le ciel affiche : —</span></span>
         </div>
       </div>
 
@@ -779,6 +781,7 @@
   var $skyModes=document.getElementById("skyModes"), $prenom=document.getElementById("prenom");
   var $settingsGrid=document.getElementById("settingsGrid");
   var $clockHello=document.getElementById("clockHello"), $clockSky=document.getElementById("clockSky");
+  var $clockSkyIcon=document.getElementById("clockSkyIcon");
 
   function loadKey(k){
     try{ var r=localStorage.getItem(k); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }
@@ -1049,11 +1052,11 @@
     var cx=(box.left-navBox.left)+box.width/2;
     var cy=(box.top-wrapBox.top)+box.height/2;
     var size=$blob.offsetWidth, half=size/2;
-    var x=cx-half, y=cy-half-8;
+    var x=cx-half, y=cy-half;   /* centré sur le bouton : plus de débordement */
 
     if(animate===false){ $blob.style.transition="none"; $blobGlow.style.transition="none"; }
     $blob.style.transform="translate3d("+x+"px,"+y+"px,0)";
-    $blobGlow.style.transform="translate3d("+(x-((96-size)/2))+"px,"+(y-((96-size)/2))+"px,0)";
+    $blobGlow.style.transform="translate3d("+(x+(size-96)/2)+"px,"+(y+(size-96)/2)+"px,0)";
     if(animate===false){ void $blob.offsetWidth; $blob.style.transition=""; $blobGlow.style.transition=""; }
   }
 
@@ -1085,6 +1088,11 @@
     var th=SKY_THEMES[t];
 
     document.documentElement.style.setProperty("--accent",th.accent);
+
+    // l'émoji suit le thème EFFECTIF (en Auto, c'est l'heure qui décide) :
+    // une lune à 16 h n'avait aucun sens
+    var ICONS={auto:"✨",aube:"🌅",jour:"☀️",coucher:"🌇",crepuscule:"🌆",nuit:"🌙"};
+    $clockSkyIcon.textContent=ICONS[t]||"✨";
     $clockSky.textContent="Le ciel affiche : "+th.skyName;
 
     // Le ciel ne s'affiche que sur l'ACCUEIL, et seulement si l'utilisateur
