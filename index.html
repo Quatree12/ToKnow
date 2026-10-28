@@ -141,7 +141,7 @@
     height:100dvh;
     max-height:100dvh;
     display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top,0px) + 14px) 14px calc(env(safe-area-inset-bottom,0px) + 10px);
+    padding:calc(env(safe-area-inset-top,0px) + 14px) 14px 0;
     transition:background .35s ease;
     max-width:100%;overflow-x:hidden;
     overflow-y:hidden;
@@ -200,10 +200,12 @@
   .subtitle.on-dark{color:#f5cdd0}
 
   main{
-    flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;
+    flex:1 1 auto;min-height:0;
+    display:flex;flex-direction:column;gap:14px;
     position:relative;z-index:2;
     overflow-y:auto;-webkit-overflow-scrolling:touch;
-    padding-bottom:4px;
+    overscroll-behavior:contain;
+    padding-bottom:2px;
     /* la barre du bas reste toujours visible : on ne reserve pas sa hauteur ici */
   }
 
@@ -320,11 +322,11 @@
     text-shadow:0 2px 0 #141416,0 6px 16px rgba(0,0,0,.7)}
   .b-date .dm{font-size:16px;font-weight:900;letter-spacing:1.5px;color:var(--accent-2);text-transform:uppercase}
   .count-line{
-    margin-top:12px;display:inline-flex;align-items:center;gap:6px;
-    font-size:11px;font-weight:800;letter-spacing:.4px;color:var(--primary);
-    max-width:94%;line-height:1.25;text-align:center;
+    margin-top:14px;display:inline-flex;align-items:center;gap:7px;
+    font-size:20px;font-weight:900;color:var(--primary);
+    line-height:1;text-align:center;
   }
-  .count-line .clip{font-size:13px;filter:grayscale(.2)}
+  .count-line .clip{font-size:19px;filter:grayscale(.2)}
 
   /* ---------- MÉTÉO ---------- */
   .wx-hero{display:flex;flex-direction:column;align-items:center;gap:14px}
@@ -447,6 +449,8 @@
   /* petites bulles, deux par ligne, comme les jours de la météo */
   .list{display:flex;flex-wrap:wrap;gap:12px;padding-bottom:14px}
   .list > .bubble{width:calc(50% - 6px)}
+  /* ecran Notes : les bulles d'ampoule restent petites, en grille serree */
+  #notesList > .note-card{width:calc(33.333% - 8px);min-height:74px}
   .list > .empty{width:100%}
   .empty{text-align:center;font-size:13.5px;font-weight:700;color:var(--paper-muted);padding:14px 8px}
 
@@ -490,13 +494,13 @@
 
   /* notes : bulles compactes */
   .note-card{
-    min-height:140px;padding:16px 18px;
+    min-height:86px;padding:12px 14px;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:6px;text-align:center;position:relative;
     cursor:pointer;
   }
   /* au repos : seule l'ampoule est visible */
-  .note-card .bulb{font-size:38px;line-height:1;transition:transform .22s ease}
+  .note-card .bulb{font-size:26px;line-height:1;transition:transform .22s ease}
   .note-card:active .bulb{transform:scale(.92)}
   /* le texte reste caché tant qu'on n'a pas ouvert la note */
   .note-card .reveal{display:none}
@@ -535,7 +539,13 @@
   /* ================================================================
      TAB BAR + BILLE DE VERRE (métaball)
      ================================================================ */
-  .tabbar-wrap{position:relative;z-index:3;margin-top:10px;isolation:isolate}
+  .tabbar-wrap{
+    position:relative;z-index:3;
+    flex:0 0 auto;
+    margin:8px -14px 0;
+    padding:0 10px calc(env(safe-area-inset-bottom,0px) + 8px);
+    isolation:isolate;
+  }
 
   .blob{
     position:absolute;top:0;left:0;height:64px;width:64px;
@@ -607,130 +617,189 @@
   }
   .crosser.go{opacity:1}
 
-  /* ---------- DECORS ANIMES ---------- */
+  /* ---------- DÉCORS ANIMÉS ---------- */
   .crosser{position:fixed;z-index:1;pointer-events:none;opacity:0;will-change:transform,opacity}
   .crosser.go{opacity:1}
 
-  /* --- avions : 3 couleurs, 3 trajectoires, plus bas dans l'ecran --- */
+  /* --- étoiles qui scintillent (aube + nuit) --- */
+  .twinkle{
+    position:fixed;z-index:1;pointer-events:none;width:3px;height:3px;border-radius:50%;
+    background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.8);
+    opacity:0;
+  }
+  .twinkle.go{animation:sparkle 4s ease-in-out infinite}
+  @keyframes sparkle{
+    0%,100%{opacity:.15;transform:scale(.7)}
+    50%{opacity:1;transform:scale(1.25)}
+  }
+
+  /* --- papillons multicolores (aube) : volent sur tout l'écran --- */
+  .butterfly{
+    position:fixed;z-index:1;pointer-events:none;font-size:20px;line-height:1;
+    opacity:0;
+  }
+  .butterfly.b1{filter:hue-rotate(0deg) saturate(1.5)}
+  .butterfly.b2{filter:hue-rotate(70deg) saturate(1.6)}
+  .butterfly.b3{filter:hue-rotate(150deg) saturate(1.5)}
+  .butterfly.b4{filter:hue-rotate(250deg) saturate(1.6)}
+  .butterfly.b5{filter:hue-rotate(310deg) saturate(1.5)}
+  .butterfly.go{animation:flit 9s ease-in-out forwards}
+  @keyframes flit{
+    0%  {transform:translate(0,0) rotate(-8deg) scale(.8);opacity:0}
+    12% {opacity:1}
+    30% {transform:translate(22vw,-14vh) rotate(10deg) scale(1.05)}
+    55% {transform:translate(48vw,6vh) rotate(-6deg) scale(.95)}
+    80% {opacity:1}
+    100%{transform:translate(88vw,-20vh) rotate(12deg) scale(.85);opacity:0}
+  }
+
+  /* --- avions (jour) : trois couleurs, plus rapides --- */
   .plane{font-size:24px;filter:drop-shadow(0 3px 6px rgba(60,40,52,.30))}
   .plane .body{display:block;font-size:24px;line-height:1}
-  .plane.blue .body{filter:hue-rotate(155deg) saturate(1.6)}
-  .plane.red  .body{filter:hue-rotate(300deg) saturate(1.7)}
-  .plane.green .body{filter:hue-rotate(60deg) saturate(1.5)}
+  .plane.blue .body{filter:hue-rotate(155deg) saturate(1.7)}
+  .plane.red  .body{filter:hue-rotate(300deg) saturate(1.8)}
+  .plane.green .body{filter:hue-rotate(60deg) saturate(1.6)}
 
-  .plane.p1{top:62%;left:-80px}
-  .plane.p2{top:74%;left:-80px;font-size:19px}
-  .plane.p3{top:54%;left:-80px;font-size:21px}
+  .plane.p1{top:58%;left:-90px}
+  .plane.p2{top:72%;left:-90px;font-size:19px}
+  .plane.p3{top:50%;left:-90px;font-size:21px}
 
-  .plane.p1.go{animation:fly1 10s linear forwards}
+  .plane.p1.go{animation:fly1 6.5s linear forwards}
   @keyframes fly1{
     0%  {transform:translate(-10vw,4vh) rotate(-6deg);opacity:0}
     8%  {opacity:1} 92%{opacity:1}
-    100%{transform:translate(114vw,-3vh) rotate(-4deg);opacity:0}
+    100%{transform:translate(116vw,-3vh) rotate(-4deg);opacity:0}
   }
-  .plane.p2.go{animation:fly2 12s linear forwards}
+  .plane.p2.go{animation:fly2 7.5s linear forwards}
   @keyframes fly2{
     0%  {transform:translate(112vw,2vh) rotate(180deg) scaleX(-1);opacity:0}
     8%  {opacity:1} 92%{opacity:1}
     100%{transform:translate(-12vw,-4vh) rotate(180deg) scaleX(-1);opacity:0}
   }
-  .plane.p3.go{animation:fly3 14s linear forwards}
+  .plane.p3.go{animation:fly3 8.5s linear forwards}
   @keyframes fly3{
     0%  {transform:translate(-8vw,14vh) rotate(-24deg);opacity:0}
     8%  {opacity:1} 92%{opacity:1}
-    100%{transform:translate(108vw,-14vh) rotate(-20deg);opacity:0}
+    100%{transform:translate(110vw,-14vh) rotate(-20deg);opacity:0}
   }
 
-  /* --- oiseaux (aube) : petits, en V, plus haut --- */
-  .birds{top:30%;left:-90px;font-size:16px;
-    filter:drop-shadow(0 2px 4px rgba(60,40,52,.28));pointer-events:none}
-  .birds .flock{display:inline-block;letter-spacing:-3px}
-  .birds.b1.go{animation:birds1 11s linear forwards}
-  @keyframes birds1{
-    0%  {transform:translate(-12vw,6vh) rotate(-5deg);opacity:0}
-    10% {opacity:1} 90%{opacity:1}
-    100%{transform:translate(114vw,-6vh) rotate(-3deg);opacity:0}
+  /* --- chauves-souris (coucher) --- */
+  .bat{
+    position:fixed;z-index:1;pointer-events:none;font-size:22px;line-height:1;
+    filter:drop-shadow(0 2px 5px rgba(20,10,20,.45));opacity:0;
   }
-  .birds.b2{top:22%;left:-90px;font-size:13px}
-  .birds.b2.go{animation:birds2 13s linear forwards}
-  @keyframes birds2{
-    0%  {transform:translate(112vw,4vh) rotate(180deg) scaleX(-1);opacity:0}
-    10% {opacity:1} 90%{opacity:1}
-    100%{transform:translate(-12vw,-2vh) rotate(180deg) scaleX(-1);opacity:0}
+  .bat.c1{top:56%;left:-90px}
+  .bat.c2{top:70%;left:-90px;font-size:17px}
+  .bat.c3{top:46%;left:-90px;font-size:19px}
+
+  .bat.c1.go{animation:bat1 7s linear forwards}
+  @keyframes bat1{
+    0%  {transform:translate(-10vw,3vh) rotate(-8deg);opacity:0}
+    10% {opacity:1} 88%{opacity:1}
+    50% {transform:translate(55vw,-6vh) rotate(6deg)}
+    100%{transform:translate(118vw,2vh) rotate(-6deg);opacity:0}
+  }
+  .bat.c2.go{animation:bat2 8.5s linear forwards}
+  @keyframes bat2{
+    0%  {transform:translate(112vw,-2vh) rotate(180deg) scaleX(-1);opacity:0}
+    10% {opacity:1} 88%{opacity:1}
+    100%{transform:translate(-12vw,4vh) rotate(180deg) scaleX(-1);opacity:0}
+  }
+  .bat.c3.go{animation:bat3 9.5s linear forwards}
+  @keyframes bat3{
+    0%  {transform:translate(-8vw,16vh) rotate(-18deg);opacity:0}
+    10% {opacity:1} 88%{opacity:1}
+    100%{transform:translate(112vw,-12vh) rotate(-14deg);opacity:0}
   }
 
-  /* --- étoiles filantes : diagonale, en haut ET dans le bas --- */
+  /* --- lucioles (crépuscule) : scintillent de plus en plus fort --- */
+  .firefly{
+    position:fixed;z-index:1;pointer-events:none;width:6px;height:6px;border-radius:50%;
+    background:radial-gradient(circle,#fffbe0,rgba(255,232,150,.9) 45%,transparent 74%);
+    opacity:0;
+  }
+  .firefly.go{animation:glow 5.5s ease-in-out infinite, driftUp 12s ease-out forwards}
+  @keyframes glow{
+    0%,100%{box-shadow:0 0 4px 1px rgba(255,225,130,.35);transform:scale(.75)}
+    50%    {box-shadow:0 0 20px 8px rgba(255,235,150,.95);transform:scale(1.35)}
+  }
+  @keyframes driftUp{
+    0%  {opacity:0}
+    10% {opacity:1}
+    80% {opacity:1}
+    100%{opacity:0;margin-top:-16vh}
+  }
+
+  /* --- étoiles filantes (nuit) : plus nombreuses, dont le bas --- */
   .shooting{height:3px}
   .shooting .head{
     position:absolute;top:-2px;width:7px;height:7px;border-radius:50%;
-    background:radial-gradient(circle,#fff,rgba(255,255,255,.65) 45%,transparent 74%);
-    box-shadow:0 0 14px 5px rgba(255,255,255,.72);
+    background:radial-gradient(circle,#fff,rgba(255,255,255,.7) 45%,transparent 74%);
+    box-shadow:0 0 16px 6px rgba(255,255,255,.8);
   }
-  .shooting .tail{position:absolute;top:0;height:2.5px;border-radius:3px;
-    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.9));
-    transform:rotate(22deg);transform-origin:right center}
+  .shooting .tail{
+    position:absolute;top:0;height:2.5px;border-radius:3px;
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95));
+    transform:rotate(22deg);transform-origin:right center;
+  }
 
-  /* A. du haut-gauche vers le bas-droite */
-  .shooting.s1{top:8%;left:-170px}
+  /* A. haut-gauche -> bas-droite */
+  .shooting.s1{top:6%;left:-170px}
   .shooting.s1 .head{right:0}
-  .shooting.s1 .tail{right:6px;width:140px;transform:rotate(22deg);transform-origin:right center}
-  .shooting.s1.go{animation:dia1 3s linear forwards}
+  .shooting.s1 .tail{right:6px;width:140px}
+  .shooting.s1.go{animation:dia1 3.2s linear forwards}
   @keyframes dia1{
     0%  {transform:translate(0,0);opacity:0}
     8%  {opacity:1} 80%{opacity:1}
-    100%{transform:translate(122vw,46vh);opacity:0}
+    100%{transform:translate(124vw,52vh);opacity:0}
   }
-  /* B. du haut-droite vers le bas-gauche */
-  .shooting.s2{top:26%;right:-170px}
+  /* B. haut-droite -> bas-gauche, longue traversée */
+  .shooting.s2{top:12%;right:-170px}
   .shooting.s2 .head{left:0}
-  .shooting.s2 .tail{left:6px;width:140px;
-    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.9));
+  .shooting.s2 .tail{left:6px;width:170px;
+    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.95));
     transform:rotate(-22deg);transform-origin:left center}
-  .shooting.s2.go{animation:dia2 3s linear forwards}
+  .shooting.s2.go{animation:dia2 4.2s linear forwards}
   @keyframes dia2{
     0%  {transform:translate(0,0);opacity:0}
-    8%  {opacity:1} 80%{opacity:1}
-    100%{transform:translate(-122vw,40vh);opacity:0}
+    8%  {opacity:1} 85%{opacity:1}
+    100%{transform:translate(-124vw,74vh);opacity:0}
   }
-  /* C. dans le BAS de l'ecran, du bas-gauche vers la droite */
-  .shooting.s3{top:72%;left:-170px}
+  /* C. dans le BAS : bas-gauche -> droite */
+  .shooting.s3{top:74%;left:-170px}
   .shooting.s3 .head{right:0}
-  .shooting.s3 .tail{right:6px;width:110px;transform:rotate(-14deg);transform-origin:right center}
-  .shooting.s3.go{animation:dia3 3.4s linear forwards}
+  .shooting.s3 .tail{right:6px;width:120px;transform:rotate(-12deg)}
+  .shooting.s3.go{animation:dia3 3.6s linear forwards}
   @keyframes dia3{
     0%  {transform:translate(0,0);opacity:0}
-    8%  {opacity:1} 80%{opacity:1}
-    100%{transform:translate(122vw,-16vh);opacity:0}
+    8%  {opacity:1} 82%{opacity:1}
+    100%{transform:translate(124vw,-18vh);opacity:0}
   }
-  /* D. dans le bas, sens inverse */
-  .shooting.s4{top:84%;right:-170px}
+  /* D. dans le BAS, sens inverse */
+  .shooting.s4{top:86%;right:-170px}
   .shooting.s4 .head{left:0}
-  .shooting.s4 .tail{left:6px;width:100px;transform:rotate(16deg);transform-origin:left center}
-  .shooting.s4.go{animation:dia4 3.8s linear forwards}
+  .shooting.s4 .tail{left:6px;width:110px;transform:rotate(14deg)}
+  .shooting.s4.go{animation:dia4 4s linear forwards}
   @keyframes dia4{
     0%  {transform:translate(0,0);opacity:0}
-    8%  {opacity:1} 80%{opacity:1}
-    100%{transform:translate(-122vw,-22vh);opacity:0}
+    8%  {opacity:1} 82%{opacity:1}
+    100%{transform:translate(-124vw,-24vh);opacity:0}
   }
-
-  /* --- lucioles (crépuscule) : points qui montent en vacillant --- */
-  .firefly{
-    position:fixed;z-index:1;pointer-events:none;width:5px;height:5px;border-radius:50%;
-    background:radial-gradient(circle,#fff8c0,rgba(255,230,140,.85) 45%,transparent 72%);
-    box-shadow:0 0 10px 3px rgba(255,225,130,.75);
-    opacity:0;
-  }
-  .firefly.go{animation:drift 6s ease-out forwards}
-  @keyframes drift{
-    0%  {transform:translate(0,0) scale(.6);opacity:0}
-    15% {opacity:.95}
-    50% {transform:translate(6vw,-6vh) scale(1.1);opacity:.8}
-    85% {opacity:.7}
-    100%{transform:translate(12vw,-14vh) scale(.7);opacity:0}
+  /* E. une cinquième, depuis le coin haut-droit, très longue */
+  .shooting.s5{top:34%;right:-170px}
+  .shooting.s5 .head{left:0}
+  .shooting.s5 .tail{left:6px;width:150px;
+    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.9));
+    transform:rotate(-26deg);transform-origin:left center}
+  .shooting.s5.go{animation:dia5 4.6s linear forwards}
+  @keyframes dia5{
+    0%  {transform:translate(0,0);opacity:0}
+    8%  {opacity:1} 85%{opacity:1}
+    100%{transform:translate(-124vw,58vh);opacity:0}
   }
 
   @media (prefers-reduced-motion:reduce){
-    .crosser.go,.firefly.go{animation:none;opacity:0}
+    .crosser.go,.firefly.go,.butterfly.go,.bat.go,.twinkle.go{animation:none;opacity:0}
   }
 
 
@@ -773,21 +842,21 @@
     <span class="crosser plane p2 red" id="plane2" aria-hidden="true"><span class="body">✈️</span></span>
     <span class="crosser plane p3 green" id="plane3" aria-hidden="true"><span class="body">✈️</span></span>
 
-    <span class="crosser birds b1" id="birds1" aria-hidden="true"><span class="flock">🕊️🕊️</span></span>
-    <span class="crosser birds b2" id="birds2" aria-hidden="true"><span class="flock">🕊️</span></span>
+    <span class="bat c1" id="bat1" aria-hidden="true">🦇</span>
+    <span class="bat c2" id="bat2" aria-hidden="true">🦇</span>
+    <span class="bat c3" id="bat3" aria-hidden="true">🦇</span>
 
-    <span class="crosser shooting s1" id="shoot1" aria-hidden="true">
-      <span class="tail"></span><span class="head"></span>
-    </span>
-    <span class="crosser shooting s2" id="shoot2" aria-hidden="true">
-      <span class="tail"></span><span class="head"></span>
-    </span>
-    <span class="crosser shooting s3" id="shoot3" aria-hidden="true">
-      <span class="tail"></span><span class="head"></span>
-    </span>
-    <span class="crosser shooting s4" id="shoot4" aria-hidden="true">
-      <span class="tail"></span><span class="head"></span>
-    </span>
+    <span class="butterfly b1" id="bf1" aria-hidden="true">🦋</span>
+    <span class="butterfly b2" id="bf2" aria-hidden="true">🦋</span>
+    <span class="butterfly b3" id="bf3" aria-hidden="true">🦋</span>
+    <span class="butterfly b4" id="bf4" aria-hidden="true">🦋</span>
+    <span class="butterfly b5" id="bf5" aria-hidden="true">🦋</span>
+
+    <span class="crosser shooting s1" id="shoot1" aria-hidden="true"><span class="tail"></span><span class="head"></span></span>
+    <span class="crosser shooting s2" id="shoot2" aria-hidden="true"><span class="tail"></span><span class="head"></span></span>
+    <span class="crosser shooting s3" id="shoot3" aria-hidden="true"><span class="tail"></span><span class="head"></span></span>
+    <span class="crosser shooting s4" id="shoot4" aria-hidden="true"><span class="tail"></span><span class="head"></span></span>
+    <span class="crosser shooting s5" id="shoot5" aria-hidden="true"><span class="tail"></span><span class="head"></span></span>
 
     <span class="firefly" id="ff1" aria-hidden="true"></span>
     <span class="firefly" id="ff2" aria-hidden="true"></span>
@@ -795,6 +864,21 @@
     <span class="firefly" id="ff4" aria-hidden="true"></span>
     <span class="firefly" id="ff5" aria-hidden="true"></span>
     <span class="firefly" id="ff6" aria-hidden="true"></span>
+    <span class="firefly" id="ff7" aria-hidden="true"></span>
+    <span class="firefly" id="ff8" aria-hidden="true"></span>
+    <span class="firefly" id="ff9" aria-hidden="true"></span>
+    <span class="firefly" id="ff10" aria-hidden="true"></span>
+    <span class="firefly" id="ff11" aria-hidden="true"></span>
+    <span class="firefly" id="ff12" aria-hidden="true"></span>
+
+    <span class="twinkle" id="tw1" aria-hidden="true"></span>
+    <span class="twinkle" id="tw2" aria-hidden="true"></span>
+    <span class="twinkle" id="tw3" aria-hidden="true"></span>
+    <span class="twinkle" id="tw4" aria-hidden="true"></span>
+    <span class="twinkle" id="tw5" aria-hidden="true"></span>
+    <span class="twinkle" id="tw6" aria-hidden="true"></span>
+    <span class="twinkle" id="tw7" aria-hidden="true"></span>
+    <span class="twinkle" id="tw8" aria-hidden="true"></span>
     <span class="crosser shooting s2" id="shoot2" aria-hidden="true">
       <span class="tail"></span><span class="head"></span>
     </span>
@@ -828,7 +912,7 @@
           <div class="dm" id="ckDm">—</div>
           <div class="count-line">
             <span class="clip" aria-hidden="true">📎</span>
-            <span><span id="homeCount">0</span> <span id="homeCountLabel">événement enregistré</span></span>
+            <span id="homeCount">0</span>
           </div>
         </div>
       </div>
@@ -918,7 +1002,7 @@
 
     <!-- ================= NOTES ================= -->
     <section class="view" id="view-notes">
-      <div class="form-bare" aria-label="Nouvelle note">
+      <div class="form-bare" aria-label="Nouvelle note" style="margin-top:64px">
         <div class="field">
           <textarea id="noteTxt" rows="2" maxlength="600"
                     placeholder="Écrivez votre note…" aria-label="Texte de la note"></textarea>
@@ -1077,7 +1161,7 @@
     var p=iso.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]);
     var parts=[]; var lab=dayLabel(iso);
     if(lab) parts.push(lab);
-    parts.push(JOURS_AB[d.getDay()]+" "+d.getDate()+" "+MOIS_AB[d.getMonth()]);
+    parts.push(d.getDate()+" "+MOIS_AB[d.getMonth()]);
     if(hm) parts.push(hm);
     return parts.join(" · ");
   }
@@ -1167,10 +1251,7 @@
   });
 
   function renderHome(){
-    var nb=loadEvents().length;
-    $homeCount.textContent=String(nb);
-    var lab=document.getElementById("homeCountLabel");
-    if(lab) lab.textContent = nb>1 ? "événements enregistrés" : "événement enregistré";
+    $homeCount.textContent=String(loadEvents().length);
     var p=loadStr(NAME_KEY,"").trim();
     $clockHello.textContent = p ? ("Bonjour "+p) : "Bienvenue";
   }
@@ -1448,9 +1529,13 @@
   /* ---------- décors animés, un par thème ---------- */
   function byId(id){ return document.getElementById(id); }
   var PLANES=[byId("plane1"),byId("plane2"),byId("plane3")];
-  var BIRDS=[byId("birds1"),byId("birds2")];
-  var SHOOTS=[byId("shoot1"),byId("shoot2"),byId("shoot3"),byId("shoot4")];
-  var FIREFLIES=[byId("ff1"),byId("ff2"),byId("ff3"),byId("ff4"),byId("ff5"),byId("ff6")];
+  var BATS=[byId("bat1"),byId("bat2"),byId("bat3")];
+  var SHOOTS=[byId("shoot1"),byId("shoot2"),byId("shoot3"),byId("shoot4"),byId("shoot5")];
+  var FIREFLIES=[byId("ff1"),byId("ff2"),byId("ff3"),byId("ff4"),byId("ff5"),byId("ff6"),
+                 byId("ff7"),byId("ff8"),byId("ff9"),byId("ff10"),byId("ff11"),byId("ff12")];
+  var BUTTERFLIES=[byId("bf1"),byId("bf2"),byId("bf3"),byId("bf4"),byId("bf5")];
+  var TWINKLES=[byId("tw1"),byId("tw2"),byId("tw3"),byId("tw4"),
+                byId("tw5"),byId("tw6"),byId("tw7"),byId("tw8")];
   var crosserTimer=null;
 
   function restart(el){
@@ -1461,43 +1546,82 @@
   }
 
   function clearFireflies(){
-    FIREFLIES.forEach(function(f){
-      if(f){ f.classList.remove("go"); f.style.opacity=""; f.style.left=""; f.style.top=""; }
+    FIREFLIES.concat(TWINKLES).forEach(function(f){
+      if(f){ f.classList.remove("go"); f.style.left=""; f.style.top=""; f.style.opacity=""; f.style.animationDelay=""; }
     });
   }
 
   function launchCrosser(){
     var t=effectiveTheme();
-    clearFireflies();
 
+    /* on remet tout a zero avant de lancer le decor du theme */
+    [].concat(PLANES,BATS,BIRDS,SHOOTS).forEach(function(el){
+      if(el) el.classList.remove("go");
+    });
+    FIREFLIES.concat(TWINKLES).forEach(function(el){
+      if(el){ el.classList.remove("go"); el.style.left=""; el.style.top=""; el.style.opacity=""; }
+    });
+
+    /* --- AUBE : étoiles qui scintillent + papillons multicolores --- */
     if(t==="aube"){
-      restart(BIRDS[0]);
-      if(BIRDS[1]) setTimeout(function(){ restart(BIRDS[1]); }, 3200);
-      return;
-    }
-    if(t==="jour" || t==="coucher"){
-      restart(PLANES[0]);
-      if(PLANES[1]) setTimeout(function(){ restart(PLANES[1]); }, 2400);
-      if(PLANES[2]) setTimeout(function(){ restart(PLANES[2]); }, 5600);
-      return;
-    }
-    if(t==="crepuscule"){
-      /* lucioles : apparaissent a des endroits varies et montent en vacillant */
-      FIREFLIES.forEach(function(f,i){
-        if(!f) return;
-        setTimeout(function(){
-          f.style.left=(8+Math.random()*80)+"vw";
-          f.style.top=(45+Math.random()*45)+"vh";
-          restart(f);
-        }, i*700);
+      TWINKLES.forEach(function(s,i){
+        if(!s) return;
+        s.style.left=(6+Math.random()*86)+"vw";
+        s.style.top=(4+Math.random()*50)+"vh";
+        s.style.animationDelay=(Math.random()*3).toFixed(2)+"s";
+        setTimeout(function(){ s.classList.add("go"); }, i*90);
+      });
+      BUTTERFLIES.forEach(function(b,i){
+        if(!b) return;
+        b.style.top=(30+Math.random()*45)+"vh";
+        setTimeout(function(){ restart(b); }, 400+i*900);
       });
       return;
     }
-    /* nuit */
+
+    /* --- JOUR : les trois avions --- */
+    if(t==="jour"){
+      restart(PLANES[0]);
+      if(PLANES[1]) setTimeout(function(){ restart(PLANES[1]); }, 1800);
+      if(PLANES[2]) setTimeout(function(){ restart(PLANES[2]); }, 4000);
+      return;
+    }
+
+    /* --- COUCHER : les chauves-souris --- */
+    if(t==="coucher"){
+      restart(BATS[0]);
+      if(BATS[1]) setTimeout(function(){ restart(BATS[1]); }, 2000);
+      if(BATS[2]) setTimeout(function(){ restart(BATS[2]); }, 4400);
+      return;
+    }
+
+    /* --- CRÉPUSCULE : les lucioles (12), scintillement progressif --- */
+    if(t==="crepuscule"){
+      FIREFLIES.forEach(function(f,i){
+        if(!f) return;
+        setTimeout(function(){
+          f.style.left=(6+Math.random()*84)+"vw";
+          f.style.top=(40+Math.random()*50)+"vh";
+          restart(f);
+        }, i*420);
+      });
+      return;
+    }
+
+    /* --- NUIT : 5 étoiles filantes + étoiles qui scintillent --- */
     restart(SHOOTS[0]);
-    if(SHOOTS[1]) setTimeout(function(){ restart(SHOOTS[1]); }, 1200);
-    if(SHOOTS[2]) setTimeout(function(){ restart(SHOOTS[2]); }, 2600);
-    if(SHOOTS[3]) setTimeout(function(){ restart(SHOOTS[3]); }, 4200);
+    if(SHOOTS[1]) setTimeout(function(){ restart(SHOOTS[1]); }, 900);
+    if(SHOOTS[2]) setTimeout(function(){ restart(SHOOTS[2]); }, 1900);
+    if(SHOOTS[3]) setTimeout(function(){ restart(SHOOTS[3]); }, 3000);
+    if(SHOOTS[4]) setTimeout(function(){ restart(SHOOTS[4]); }, 4100);
+
+    TWINKLES.forEach(function(s,i){
+      if(!s) return;
+      s.style.left=(5+Math.random()*88)+"vw";
+      s.style.top=(3+Math.random()*80)+"vh";
+      s.style.animationDelay=(Math.random()*3).toFixed(2)+"s";
+      setTimeout(function(){ s.classList.add("go"); }, i*120);
+    });
   }
 
   function scheduleCrossers(){
