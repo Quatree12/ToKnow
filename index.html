@@ -18,11 +18,9 @@
 <style>
   /* ================================================================
      POLICE "SOGEA"
-     Le fichier de la police Sogea n'est pas distribuable ici : la
-     déclaration @font-face pointe vers ./Sogea.woff2 (ou .woff/.otf/.ttf).
-     Déposez le fichier à côté de l'index.html et il sera utilisé tel quel.
-     En son absence, on retombe sur une pile géométrique très proche
-     (Poppins / Montserrat) chargée depuis Google Fonts.
+     Le fichier Sogea n'est pas distribuable (police commerciale).
+     Déposez Sogea.woff2 (ou .woff/.otf/.ttf) à la racine : il sera
+     pris automatiquement. Sinon repli sur Poppins, très proche.
      ================================================================ */
   @font-face{
     font-family:"Sogea";
@@ -30,13 +28,10 @@
         url("Sogea.woff")  format("woff"),
         url("Sogea.otf")   format("opentype"),
         url("Sogea.ttf")   format("truetype");
-    font-weight:400 900;
-    font-style:normal;
-    font-display:swap;
+    font-weight:400 900;font-style:normal;font-display:swap;
   }
 
   :root{
-    /* ---- PALETTE IMPOSÉE ---- */
     --primary:#E69CBA;
     --secondary:#826E8B;
     --accent-1:#EB6E9B;
@@ -52,39 +47,21 @@
     --stone-ink:#ece6da;
     --stone-muted:#9a9490;
 
-    /* accent métaball — piloté par le thème du ciel */
     --accent:var(--accent-1);
 
-    --radius:26px;
-    --radius-sm:22px;
     --font:"Sogea","Poppins","Montserrat",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 
-    /* ---- FORMES "LAVA BUBBLES" ----
-       Des rayons tres inegaux sur les quatre coins : la silhouette ondule
-       au lieu d'etre un rectangle regulier. Trois variantes pour que deux
-       bulles voisines ne se ressemblent jamais. */
-    --bubble-a:58% 42% 46% 54% / 44% 56% 44% 56%;
-    --bubble-b:42% 58% 54% 46% / 56% 44% 56% 44%;
-    --bubble-c:52% 48% 60% 40% / 48% 52% 48% 52%;
+    /* ============================================================
+       FORMES "LAVA BUBBLES" — accentuées
+       Un rayon par coin, tres inegal, plus une ondulation verticale.
+       Les bulles des images de référence ne sont pas des rectangles
+       arrondis : ce sont des galets organiques.
+       ============================================================ */
+    --blob-a:62% 38% 52% 48% / 44% 60% 40% 56%;
+    --blob-b:38% 62% 44% 56% / 58% 42% 62% 38%;
+    --blob-c:54% 46% 64% 36% / 40% 56% 44% 60%;
+    --blob-d:44% 56% 36% 64% / 60% 40% 58% 42%;
   }
-
-  /* --- silhouettes lava bubbles, appliquees par-dessus le rayon de base --- */
-  .carve,.clock,.wood,.paper{
-    border-radius:var(--bubble-a);
-  }
-  /* le contenu respire : une bulle n'a pas d'angles pour le tenir */
-  .carve,.clock{padding-left:22px;padding-right:22px}
-
-  /* variantes : on alterne pour casser la regularite */
-  .view > *:nth-child(2n) .carve,
-  .view > *:nth-child(2n),
-  .list > *:nth-child(2n){border-radius:var(--bubble-b)}
-  .view > *:nth-child(3n),
-  .list > *:nth-child(3n){border-radius:var(--bubble-c)}
-
-  /* les champs et boutons internes suivent le mouvement, en plus doux */
-  .field{border-radius:46% 54% 50% 50% / 52% 48% 52% 48%}
-  .btn-carve{border-radius:50% 50% 46% 54% / 56% 44% 52% 48%}
 
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
@@ -96,7 +73,7 @@
   }
 
   /* ================================================================
-     MARBRE — visuel 09  (ACCUEIL, AGENDA, RÉGLAGES)
+     MARBRE — visuel 09 (ACCUEIL, AGENDA, RÉGLAGES)
      ================================================================ */
   .bg-marble{
     background-color:#f4f1ec;
@@ -110,7 +87,7 @@
   }
 
   /* ================================================================
-     PAPIER — visuel 01  (MÉTÉO, NOTES)
+     PAPIER — visuel 01 (MÉTÉO, NOTES)
      ================================================================ */
   .bg-paper{
     background-color:var(--paper-1);
@@ -125,8 +102,7 @@
   }
 
   /* ================================================================
-     PIERRE SCULPTÉE — lettre "K" (visuel 07)
-     Pour TOUS les panneaux, champs et boutons.
+     PIERRE SCULPTÉE — lettre "K"
      ================================================================ */
   .carve{
     position:relative;
@@ -140,7 +116,6 @@
     background-size:240px 240px,300px 300px,100% 100%,100% 100%,100% 100%;
     background-repeat:repeat,repeat,no-repeat,no-repeat,no-repeat;
     background-blend-mode:overlay,normal,normal,normal,normal;
-    border-radius:var(--radius);
     box-shadow:
       inset 1px 1px 0 rgba(255,255,255,.20),
       inset -2px -3px 9px rgba(0,0,0,.72),
@@ -163,11 +138,9 @@
   .app{
     position:relative;height:100%;
     display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top,0px) + 16px) 14px calc(env(safe-area-inset-bottom,0px) + 10px);
+    padding:calc(env(safe-area-inset-top,0px) + 14px) 14px calc(env(safe-area-inset-bottom,0px) + 10px);
     transition:background .35s ease;
-    /* rien ne doit deborder horizontalement */
-    max-width:100%;
-    overflow-x:hidden;
+    max-width:100%;overflow-x:hidden;
   }
 
   .sky-layer{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s ease}
@@ -199,15 +172,13 @@
       radial-gradient(1.2px 1.2px at 62% 52%, #fff, transparent),
       radial-gradient(1.6px 1.6px at 22% 68%, #fff, transparent),
       radial-gradient(1.3px 1.3px at 86% 74%, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 48% 84%, #fff, transparent),
-      radial-gradient(1.4px 1.4px at 8% 44%, #fff, transparent),
-      radial-gradient(1.2px 1.2px at 92% 36%, #fff, transparent);
+      radial-gradient(1.5px 1.5px at 48% 84%, #fff, transparent);
     opacity:0;transition:opacity .8s ease;animation:twinkle 5s ease-in-out infinite;
   }
   .stars.on{opacity:.9}
   @keyframes twinkle{0%,100%{opacity:.9}50%{opacity:.5}}
 
-  header{position:relative;z-index:2;padding:2px 4px 14px}
+  header{position:relative;z-index:2;padding:2px 6px 12px}
 
   h1{
     margin:0;font-size:30px;line-height:1;font-weight:900;letter-spacing:1.3px;
@@ -221,62 +192,50 @@
     filter:drop-shadow(0 2px 6px rgba(0,0,0,.55));
   }
 
-  .subtitle{margin:7px 0 0;font-size:14.5px;font-weight:600;color:var(--secondary)}
+  .subtitle{margin:6px 0 0;font-size:14px;font-weight:600;color:var(--secondary)}
   .subtitle.on-dark{color:#f5cdd0}
 
   main{
     flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;
-    position:relative;z-index:2;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;
+    position:relative;z-index:2;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px;
   }
 
   .view{display:none;flex-direction:column;gap:16px}
   .view.active{display:flex}
 
-  /* ---------- champs en pierre creusée ---------- */
-  .form{padding:16px 14px 18px}
-
+  /* ---------- champs ---------- */
+  .form{padding:16px 16px 18px}
   .field{
-    position:relative;border-radius:var(--radius-sm);padding:15px 18px;margin-bottom:12px;
+    position:relative;
+    border-radius:44% 56% 50% 50% / 52% 48% 54% 46%;
+    padding:15px 20px;margin-bottom:12px;
     background-color:#1c1c1f;
     background-image:
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='fg'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='5' seed='11'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23fg)' opacity='0.55'/></svg>");
     background-blend-mode:overlay;
     box-shadow:
       inset 0 4px 9px rgba(0,0,0,.88),
-      inset 0 -1px 0 rgba(255,255,255,.14),
-      inset 0 1px 0 rgba(255,255,255,.10);
+      inset 0 -1px 0 rgba(255,255,255,.14);
     overflow:hidden;
   }
-  .field::before{
-    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    background:repeating-linear-gradient(78deg, rgba(0,0,0,.20) 0 1px, transparent 1px 12px);
-    mix-blend-mode:overlay;opacity:.7;
-  }
-
   .field input,.field textarea{
     width:100%;border:0;outline:0;background:transparent;
     font:inherit;font-size:16px;font-weight:600;color:var(--stone-ink);
-    resize:none;position:relative;z-index:1;letter-spacing:.3px;
+    resize:none;position:relative;z-index:1;letter-spacing:.3px;text-align:center;
   }
   .field input::placeholder,.field textarea::placeholder{color:var(--stone-muted);font-weight:500}
-  .field textarea{min-height:22px;max-height:96px;overflow-y:auto;line-height:1.35}
-
-  /* le libellé flottant double le placeholder : on le masque, l'attribut
-     HTML placeholder suffit et ne peut pas se superposer */
-  .field.is-empty::after{display:none}
-
+  .field textarea{min-height:60px;max-height:120px;overflow-y:auto;line-height:1.35}
   input[type="date"],input[type="time"]{color-scheme:dark;-webkit-appearance:none;appearance:none}
   input[type="date"]::-webkit-calendar-picker-indicator,
-  input[type="time"]::-webkit-calendar-picker-indicator{
-    filter:invert(.72) saturate(.3);cursor:pointer;
-  }
+  input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(.72) saturate(.3);cursor:pointer}
 
-  /* ---------- bouton en pierre ---------- */
+  /* ---------- bouton pierre ---------- */
   .btn-carve{
     width:100%;margin-top:4px;border:0;cursor:pointer;font:inherit;
     font-size:18px;font-weight:800;letter-spacing:.8px;
     color:var(--primary);text-shadow:0 1px 0 rgba(0,0,0,.8);
-    border-radius:var(--radius-sm);padding:16px 18px;
+    border-radius:50% 50% 44% 56% / 56% 44% 54% 46%;
+    padding:16px 18px;
     display:flex;align-items:center;justify-content:center;gap:10px;
     background-color:#4a4a4e;
     background-image:
@@ -287,250 +246,267 @@
       inset 1px 1px 0 rgba(255,255,255,.26),
       inset 0 -4px 10px rgba(0,0,0,.62),
       0 7px 15px rgba(40,34,42,.32);
-    transition:transform .09s ease, box-shadow .09s ease, filter .09s ease;
+    transition:transform .09s ease, filter .09s ease;
     position:relative;overflow:hidden;
   }
-  .btn-carve::after{
-    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    background-image:repeating-linear-gradient(118deg, rgba(0,0,0,.16) 0 1px, transparent 1px 11px);
-    mix-blend-mode:overlay;opacity:.6;
-  }
+  .btn-carve:active{transform:translateY(2px) scale(.994);filter:brightness(.93)}
   .btn-carve .plus,.btn-carve span:last-child{position:relative;z-index:1}
   .btn-carve .plus{font-size:22px;font-weight:700;line-height:1}
-  .btn-carve:active{
-    transform:translateY(2px) scale(.994);filter:brightness(.93);
-    box-shadow:inset 0 5px 12px rgba(0,0,0,.75), 0 2px 6px rgba(40,34,42,.26);
+
+  /* ================================================================
+     BULLE RONDE (accueil, météo, notes, réglages)
+     ================================================================ */
+  .bubble{
+    position:relative;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:2px;
+    background-color:#3a3a3e;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='bg2'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='6' seed='7'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23bg2)' opacity='0.62'/></svg>"),
+      radial-gradient(ellipse 60% 40% at 28% 6%, rgba(255,255,255,.18), transparent 62%),
+      radial-gradient(ellipse 72% 48% at 80% 100%, rgba(0,0,0,.62), transparent 66%),
+      linear-gradient(158deg,var(--stone-1) 0%,var(--stone-2) 46%,var(--stone-3) 100%);
+    background-blend-mode:overlay,normal,normal,normal;
+    box-shadow:
+      inset 1px 1px 0 rgba(255,255,255,.20),
+      inset -2px -3px 9px rgba(0,0,0,.72),
+      inset 3px 0 8px rgba(0,0,0,.34),
+      inset -3px 0 8px rgba(0,0,0,.34),
+      0 14px 26px rgba(40,34,42,.34),
+      0 3px 0 #0d0d0f;
+    overflow:hidden;
   }
-  .btn-carve:focus-visible{outline:3px solid var(--accent-1);outline-offset:3px}
+  .bubble::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background-image:
+      repeating-linear-gradient(114deg, rgba(0,0,0,.16) 0 1px, transparent 1px 10px),
+      repeating-linear-gradient(23deg, rgba(255,255,255,.045) 0 1px, transparent 1px 16px);
+    mix-blend-mode:overlay;opacity:.8;
+  }
+  .bubble > *{position:relative;z-index:1}
 
-  /* ---------- listes ---------- */
+  /* ---------- ACCUEIL : deux bulles ---------- */
+  .home-row{display:flex;align-items:flex-start;gap:14px}
+  .b-time{
+    flex:0 0 auto;
+    width:min(56vw,215px);height:min(56vw,215px);
+    border-radius:var(--blob-a);
+    padding:14px;
+  }
+  .b-time .hh{font-size:52px;font-weight:900;line-height:.96;color:#ece6da;
+    text-shadow:0 2px 0 #141416,0 6px 14px rgba(0,0,0,.7)}
+  .b-time .mm{font-size:52px;font-weight:900;line-height:.96;color:#ece6da;
+    text-shadow:0 2px 0 #141416,0 6px 14px rgba(0,0,0,.7)}
+  .b-time .ss{font-size:20px;font-weight:800;color:var(--primary);letter-spacing:3px;margin-top:4px}
+  .b-time .hello{font-size:11.5px;font-weight:800;letter-spacing:1px;color:var(--primary);
+    text-transform:uppercase;margin-bottom:6px}
+
+  .b-date{
+    flex:1 1 auto;min-height:min(56vw,215px);
+    border-radius:var(--blob-b);
+    padding:18px 14px;
+  }
+  .b-date .dw{font-size:16px;font-weight:900;letter-spacing:2px;color:var(--primary);text-transform:uppercase}
+  .b-date .dn{font-size:60px;font-weight:900;line-height:1;color:#ece6da;margin:2px 0;
+    text-shadow:0 2px 0 #141416,0 6px 16px rgba(0,0,0,.7)}
+  .b-date .dm{font-size:16px;font-weight:900;letter-spacing:1.5px;color:var(--accent-2);text-transform:uppercase}
+
+  /* ---------- MÉTÉO ---------- */
+  .wx-hero{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .b-temp{
+    width:min(62vw,240px);height:min(62vw,240px);
+    border-radius:var(--blob-c);
+    padding:18px;
+  }
+  .b-temp .place{font-size:11px;font-weight:900;letter-spacing:1.4px;color:var(--primary);text-transform:uppercase}
+  .b-temp .ico{font-size:40px;line-height:1;margin:2px 0}
+  .b-temp .val{font-size:60px;font-weight:900;line-height:1;color:#ece6da;
+    text-shadow:0 2px 0 #141416,0 6px 16px rgba(0,0,0,.7)}
+  .b-temp .desc{font-size:12.5px;font-weight:700;color:var(--accent-2);margin-top:2px}
+
+  .wx-mini{display:flex;gap:16px;justify-content:center;width:100%}
+  .b-mini{
+    flex:1 1 0;max-width:44%;min-height:118px;
+    padding:14px 10px;
+  }
+  .b-mini:nth-child(1){border-radius:var(--blob-b)}
+  .b-mini:nth-child(2){border-radius:var(--blob-d)}
+  .b-mini .lbl{font-size:10.5px;font-weight:900;letter-spacing:1px;color:var(--primary);text-transform:uppercase}
+  .b-mini .val{font-size:24px;font-weight:900;color:#ece6da;line-height:1.1;margin-top:2px;
+    text-shadow:0 2px 0 #141416,0 5px 12px rgba(0,0,0,.65)}
+  .b-mini .sub{font-size:10.5px;font-weight:700;color:var(--accent-2);margin-top:3px}
+
+  .wx-days{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .b-day{
+    width:calc(33.333% - 8px);
+    min-height:112px;
+    padding:12px 6px;
+  }
+  .b-day:nth-child(1){border-radius:var(--blob-a)}
+  .b-day:nth-child(2){border-radius:var(--blob-c)}
+  .b-day:nth-child(3){border-radius:var(--blob-b)}
+  .b-day:nth-child(4){border-radius:var(--blob-d)}
+  .b-day:nth-child(5){border-radius:var(--blob-a)}
+  .b-day.today{box-shadow:
+      inset 1px 1px 0 rgba(255,255,255,.20),
+      inset -2px -3px 9px rgba(0,0,0,.72),
+      0 0 0 2px var(--accent-1),
+      0 14px 26px rgba(40,34,42,.34)}
+  .b-day .d{font-size:11px;font-weight:900;letter-spacing:.6px;color:var(--primary)}
+  .b-day .i{font-size:24px;line-height:1;margin:3px 0}
+  .b-day .t{font-size:16px;font-weight:900;color:#ece6da;line-height:1.1}
+  .b-day .m{font-size:11.5px;font-weight:700;color:var(--stone-muted)}
+
+  .wx-sun{display:flex;gap:14px;justify-content:center;width:100%}
+  .wx-sun .bubble{flex:1 1 0;min-height:96px;padding:12px 8px}
+  .wx-sun .bubble:nth-child(1){border-radius:var(--blob-b)}
+  .wx-sun .bubble:nth-child(2){border-radius:var(--blob-c)}
+
+  .wx-meta{text-align:center;font-size:11.5px;font-weight:700;color:var(--stone-muted)}
+  .wx-empty{text-align:center;font-size:13px;font-weight:700;color:var(--paper-muted);padding:6px 4px}
+
+  /* ---------- AGENDA : bouton + qui déplie ---------- */
+  .agenda-head{display:flex;justify-content:center}
+  .fab-plus{
+    width:96px;height:96px;flex:0 0 auto;
+    border:0;cursor:pointer;font:inherit;
+    border-radius:52% 48% 46% 54% / 48% 54% 46% 52%;
+    color:var(--primary);font-size:44px;font-weight:300;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    background-color:#4a4a4e;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='fp'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' seed='21'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23fp)' opacity='0.55'/></svg>"),
+      radial-gradient(ellipse 60% 40% at 30% 8%, rgba(255,255,255,.22), transparent 62%),
+      linear-gradient(168deg,var(--stone-1),var(--stone-2) 48%,var(--stone-3));
+    background-blend-mode:overlay,normal,normal;
+    box-shadow:
+      inset 1px 1px 0 rgba(255,255,255,.28),
+      inset 0 -5px 12px rgba(0,0,0,.65),
+      0 10px 20px rgba(40,34,42,.36),
+      0 3px 0 #0d0d0f;
+    transition:transform .18s cubic-bezier(.34,1.4,.5,1);
+  }
+  .fab-plus span{position:relative;z-index:1;text-shadow:0 2px 4px rgba(0,0,0,.7);
+    transition:transform .32s cubic-bezier(.34,1.4,.5,1)}
+  .fab-plus.open{transform:rotate(0deg)}
+  .fab-plus.open span{transform:rotate(135deg)}
+
+  .agenda-form{
+    display:grid;grid-template-rows:0fr;opacity:0;
+    transition:grid-template-rows .38s ease, opacity .28s ease, margin .38s ease;
+    margin-top:0;
+  }
+  .agenda-form > .inner{overflow:hidden}
+  .agenda-form.open{grid-template-rows:1fr;opacity:1;margin-top:2px}
+  .agenda-form .carve{padding:18px 16px}
+
   .list{display:flex;flex-direction:column;gap:14px;padding-bottom:14px}
-  .empty{text-align:center;font-size:14px;font-weight:600;color:var(--paper-muted);padding:16px 10px 6px}
+  .empty{text-align:center;font-size:13.5px;font-weight:700;color:var(--paper-muted);padding:14px 8px}
 
-  .event{padding:16px 18px;display:flex;align-items:center;gap:14px;animation:drop .28s ease both}
+  /* événements en bulles compactes */
+  .event{
+    min-height:150px;
+    padding:16px 18px 18px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;text-align:center;
+    animation:drop .3s ease both;
+  }
   @keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
   .event.leaving{animation:lift .22s ease both}
   @keyframes lift{to{opacity:0;transform:translateX(28px) scale(.96)}}
-  .event .body{flex:1;min-width:0;position:relative;z-index:1}
-  .event .initial{
-    font-size:13px;font-weight:800;color:var(--primary);letter-spacing:.8px;
-    text-transform:uppercase;display:block;margin-bottom:4px;
+  .event .when{font-size:15px;font-weight:800;color:var(--accent-2);line-height:1.35}
+  .event .note{font-size:13.5px;font-weight:600;color:#cbb3c0;line-height:1.3}
+  .event .del{
+    position:absolute;top:12px;right:14px;z-index:2;
+    border:0;background:transparent;cursor:pointer;padding:6px;
+    color:var(--primary);line-height:0;
   }
-  .event .when{font-size:15px;font-weight:700;color:var(--accent-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .event .note{
-    font-size:13.5px;font-weight:500;color:#cbb3c0;margin-top:3px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
+  .event .del:active{transform:scale(.9)}
 
-  .del{
-    flex:0 0 auto;border:0;background:transparent;cursor:pointer;
-    padding:8px;border-radius:12px;color:var(--primary);position:relative;z-index:1;
-    transition:color .15s ease, background-color .15s ease, transform .1s ease;
-  }
-  .del:hover{color:var(--accent-1);background:rgba(255,255,255,.12)}
-  .del:active{transform:scale(.9)}
-  .del svg{display:block}
-
-  /* ---------- météo ---------- */
-  .weather{padding:26px 20px;text-align:center}
-  .weather .place{
-    font-size:14px;font-weight:800;letter-spacing:1.1px;
-    color:var(--primary);position:relative;z-index:1;
-  }
-  .weather .wicon{font-size:46px;line-height:1;margin:10px 0 2px;position:relative;z-index:1}
-  .weather .temp{
-    font-size:64px;font-weight:900;line-height:1;margin:6px 0 2px;
-    color:var(--accent-2);letter-spacing:-1.5px;position:relative;z-index:1;
-    text-shadow:0 2px 8px rgba(0,0,0,.55);
-  }
-  .weather .wdesc{font-size:14px;font-weight:700;color:#e8c4d4;position:relative;z-index:1}
-  .weather .wmeta{
-    font-size:12px;font-weight:600;color:var(--stone-muted);
-    margin-top:10px;position:relative;z-index:1;
-  }
-  .weather .chips{
-    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
-    margin-top:12px;position:relative;z-index:1;
-  }
-  .chip{
-    background:rgba(245,205,208,.90);color:#4a2f3d;
-    font-size:12px;font-weight:700;padding:8px 14px;border-radius:15px;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 0 2px 6px rgba(40,20,30,.30);
-    display:inline-flex;align-items:center;gap:6px;
-  }
-
-  .weather.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:18px 10px}
-  .weather-day{
-    display:flex;flex-direction:column;align-items:center;gap:6px;
-    padding:9px 2px;border-radius:16px;position:relative;z-index:1;
-  }
-  .weather-day.today{background:rgba(235,110,155,.26);box-shadow:inset 0 0 0 1.5px rgba(235,110,155,.55)}
-  .weather-day .d{font-size:10px;font-weight:900;letter-spacing:.5px;color:var(--primary)}
-  .weather-day .i{font-size:22px;line-height:1}
-  .weather-day .t{font-size:12.5px;font-weight:800;color:var(--accent-2)}
-  .weather-day .m{font-size:10.5px;font-weight:700;color:var(--stone-muted)}
-
-  /* ---------- notes ---------- */
-  .note-card{padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
-  .note-card .body{flex:1;min-width:0;position:relative;z-index:1}
-  .note-card .initial{
-    font-size:13px;font-weight:800;color:var(--primary);letter-spacing:.8px;
-    text-transform:uppercase;display:block;margin-bottom:4px;
-  }
-  .note-card .meta{
-    font-size:11px;font-weight:800;letter-spacing:.6px;
-    color:var(--primary);margin-bottom:5px;text-transform:uppercase;opacity:.9;
-  }
-  .note-card .txt{
-    font-size:14.5px;font-weight:600;color:var(--accent-2);line-height:1.45;
-    white-space:pre-wrap;word-break:break-word;
-  }
-
-  /* ---------- réglages ---------- */
+  /* réglages : tuiles bulles, texte tenu */
   .carve-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-bottom:16px}
-  .carve-tile{
-    padding:18px 16px;display:flex;flex-direction:column;gap:8px;
-    cursor:pointer;border:0;text-align:left;font:inherit;
-    transition:transform .12s ease, filter .12s ease;
+  .b-tile{
+    min-height:138px;padding:16px 14px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:5px;text-align:center;cursor:pointer;border:0;font:inherit;
   }
-  .carve-tile:active{transform:translateY(2px);filter:brightness(.93)}
-  .carve-tile .ico{font-size:22px;line-height:1;position:relative;z-index:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
-  .carve-tile .t{
-    font-size:14px;font-weight:900;letter-spacing:.4px;color:var(--accent-2);
-    text-shadow:0 1px 3px rgba(0,0,0,.6);position:relative;z-index:1;
-  }
-  .carve-tile .s{font-size:11px;font-weight:700;color:var(--primary);position:relative;z-index:1}
+  .b-tile:nth-child(4n+1){border-radius:var(--blob-a)}
+  .b-tile:nth-child(4n+2){border-radius:var(--blob-b)}
+  .b-tile:nth-child(4n+3){border-radius:var(--blob-c)}
+  .b-tile:nth-child(4n+4){border-radius:var(--blob-d)}
+  .b-tile .ico{font-size:22px;line-height:1}
+  .b-tile .t{font-size:13.5px;font-weight:900;letter-spacing:.3px;color:var(--accent-2);
+    line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.6);word-break:break-word}
+  .b-tile .s{font-size:10.5px;font-weight:700;color:var(--primary);line-height:1.2}
 
-  .panel-label{
-    font-size:12px;font-weight:900;letter-spacing:1.2px;
-    color:var(--primary);position:relative;z-index:1;
+  /* notes : bulles compactes */
+  .note-card{
+    min-height:140px;padding:16px 18px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:6px;text-align:center;position:relative;
   }
-  .panel-note{
-    font-size:12px;font-weight:600;color:#c9aebc;
-    line-height:1.5;position:relative;z-index:1;
-  }
-
-  /* ================================================================
-     HORLOGE EN PIERRE SCULPTÉE (heures AU-DESSUS des minutes)
-     ================================================================ */
-  .clock{
-    position:relative;padding:24px 18px 20px;border-radius:30px;overflow:hidden;
-    background-color:#333338;
-    background-image:
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='cg'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='6' seed='5'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23cg)' opacity='0.66'/></svg>"),
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'><g fill='none' stroke='%230b0b0c' stroke-linecap='round'><path d='M24 62 C 78 78, 120 44, 186 70' stroke-width='2' opacity='.6'/><path d='M40 236 C 96 218, 148 258, 240 232' stroke-width='1.6' opacity='.5'/><path d='M150 16 L 164 54 L 146 88' stroke-width='1.3' opacity='.42'/><path d='M256 128 C 276 156, 288 174, 282 208' stroke-width='1.4' opacity='.40'/></g><g fill='none' stroke='%23c4bdb3' stroke-linecap='round'><path d='M38 118 C 92 102, 140 128, 208 106' stroke-width='1.2' opacity='.24'/><path d='M104 278 C 160 262, 212 290, 278 270' stroke-width='1' opacity='.20'/></g></svg>"),
-      radial-gradient(ellipse 66% 44% at 24% 4%, rgba(255,255,255,.18), transparent 62%),
-      radial-gradient(ellipse 74% 50% at 84% 100%, rgba(0,0,0,.66), transparent 68%),
-      linear-gradient(158deg,#58585c 0%,#3a3a3e 46%,#212125 100%);
-    background-size:240px 240px,320px 320px,100% 100%,100% 100%,100% 100%;
-    background-repeat:repeat,repeat,no-repeat,no-repeat,no-repeat;
-    background-blend-mode:overlay,normal,normal,normal,normal;
-    box-shadow:
-      inset 1px 1px 0 rgba(255,255,255,.22),
-      inset -3px -4px 12px rgba(0,0,0,.75),
-      inset 4px 0 10px rgba(0,0,0,.36),
-      inset -4px 0 10px rgba(0,0,0,.36),
-      0 16px 32px rgba(40,34,42,.40),
-      0 3px 0 #0d0d0f;
-  }
-  .clock::after{
-    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    background-image:
-      repeating-linear-gradient(114deg, rgba(0,0,0,.16) 0 1px, transparent 1px 11px),
-      repeating-linear-gradient(23deg, rgba(255,255,255,.05) 0 1px, transparent 1px 17px);
-    mix-blend-mode:overlay;opacity:.8;
+  .note-card .meta{font-size:10.5px;font-weight:900;letter-spacing:.8px;
+    color:var(--primary);text-transform:uppercase}
+  .note-card .txt{font-size:14.5px;font-weight:700;color:var(--accent-2);line-height:1.4;
+    white-space:pre-wrap;word-break:break-word}
+  .note-card .del{
+    position:absolute;top:12px;right:14px;z-index:2;
+    border:0;background:transparent;cursor:pointer;padding:6px;
+    color:var(--primary);line-height:0;
   }
 
-  .clock-inner{position:relative;z-index:3;text-align:center}
-  .clock-stack{display:flex;flex-direction:column;align-items:center;gap:2px}
-  .clock-line{
-    font-size:74px;font-weight:900;line-height:.94;letter-spacing:2px;
-    font-variant-numeric:tabular-nums;color:#ece6da;
-    text-shadow:
-      0 -1px 0 rgba(255,255,255,.22),
-      0 2px 0 #141416,
-      0 5px 12px rgba(0,0,0,.72),
-      0 10px 28px rgba(0,0,0,.45);
-  }
-  .clock-line.sec-line{
-    font-size:30px;font-weight:800;letter-spacing:4px;
-    color:var(--primary);opacity:.92;margin-top:4px;
-    text-shadow:0 -1px 0 rgba(255,255,255,.18), 0 4px 10px rgba(0,0,0,.65);
-  }
-  .clock-day{
-    margin-top:12px;font-size:13px;font-weight:800;letter-spacing:1.2px;
-    color:var(--primary);text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,.6);
-  }
+  /* le ciel : badge + panneaux des réglages */
+  .panel-label{font-size:12px;font-weight:900;letter-spacing:1.2px;
+    color:var(--primary);position:relative;z-index:1;text-align:center;display:block}
+  .panel-note{font-size:11.5px;font-weight:600;color:#c9aebc;
+    line-height:1.5;position:relative;z-index:1;text-align:center;display:block}
+
   .clock-badge{
     display:inline-flex;align-items:center;gap:7px;
-    margin-top:14px;padding:8px 16px;border-radius:16px;
+    margin-top:12px;padding:8px 16px;border-radius:44% 56% 50% 50% / 52% 48% 54% 46%;
     background:rgba(20,20,22,.62);border:1px solid rgba(255,255,255,.14);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
-    font-size:12px;font-weight:700;color:var(--accent-2);
-    position:relative;z-index:3;
-  }
-  .clock-hello{
-    font-size:14.5px;font-weight:700;color:var(--accent-2);
-    text-align:center;margin-bottom:10px;position:relative;z-index:3;
-    text-shadow:0 2px 6px rgba(0,0,0,.55);
+    font-size:11.5px;font-weight:700;color:var(--accent-2);
+    position:relative;z-index:3;max-width:92%;
   }
 
   /* ================================================================
-     TAB BAR — bouton MÉTABALL, couleur du thème
+     TAB BAR + BILLE DE VERRE (métaball)
      ================================================================ */
-  /* la goutte passe DEVANT la barre, en verre clair */
   .tabbar-wrap{position:relative;z-index:3;margin-top:10px;isolation:isolate}
 
-  /* Goutte métaball : plus de filtre goo — la fusion floutait tout.
-     On dessine une vraie bille de verre (cf. les références) :
-     anneau sombre au pourtour, corps transparent teinté, reflets nets. */
   .blob{
     position:absolute;top:0;left:0;height:64px;width:64px;
     z-index:3;pointer-events:none;transform:translate3d(0,0,0);
     transition:transform .52s cubic-bezier(.44,1.35,.5,1);
-    border-radius:50%;
-    overflow:hidden;
-    /* corps du verre : teinte du thème, plus dense sur les bords */
-    background:
-      radial-gradient(circle at 33% 26%,
-        rgba(255,255,255,.30) 0%,
-        var(--accent) 34%,
-        var(--accent) 100%);
+    border-radius:50%;overflow:hidden;
+    background:radial-gradient(circle at 33% 26%,
+        rgba(255,255,255,.30) 0%, var(--accent) 34%, var(--accent) 100%);
     opacity:.62;
     box-shadow:
-      /* anneau sombre caractéristique d'une bille de verre */
       inset 0 0 0 1.5px rgba(40,20,45,.35),
-      /* lumière rasante sur le bord bas */
       inset 0 -6px 12px rgba(255,255,255,.55),
       inset 0 6px 14px rgba(255,255,255,.22),
-      /* ombre portée teintée sous la bille */
       0 8px 14px -4px var(--accent),
       0 3px 8px rgba(60,40,52,.28);
   }
-  /* reflets : un grand ovale en haut à gauche, un petit en haut à droite */
   .blob::before{
-    content:"";position:absolute;
-    left:11px;top:7px;width:24px;height:15px;
-    border-radius:50%;
+    content:"";position:absolute;left:11px;top:7px;width:24px;height:15px;border-radius:50%;
     background:radial-gradient(ellipse at 42% 42%, rgba(255,255,255,.98), rgba(255,255,255,0) 72%);
     filter:blur(.6px);
   }
   .blob::after{
-    content:"";position:absolute;
-    right:11px;top:12px;width:9px;height:9px;
-    border-radius:50%;
+    content:"";position:absolute;right:11px;top:12px;width:9px;height:9px;border-radius:50%;
     background:radial-gradient(circle at 45% 45%, rgba(255,255,255,.9), rgba(255,255,255,0) 70%);
     filter:blur(.5px);
   }
-  /* la structure interne goo n'est plus utilisée */
   .blob i{display:none}
-
   .blob-glass{display:none}
   .blob-glow{display:none}
 
   nav{
     position:relative;z-index:1;
-    background:var(--accent-2);border-radius:34px;padding:9px 6px;
+    background:var(--accent-2);border-radius:44% 56% 40% 60% / 50% 50% 50% 50%;
+    padding:9px 10px;
     display:grid;grid-template-columns:repeat(5,1fr);
     box-shadow:0 10px 24px rgba(60,40,52,.24), inset 0 -2px 0 rgba(255,255,255,.7);
   }
@@ -538,7 +514,7 @@
   .tab{
     appearance:none;border:0;background:transparent;cursor:pointer;font:inherit;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:5px;padding:8px 2px 6px;border-radius:22px;
+    gap:5px;padding:8px 2px 6px;border-radius:50%;
     color:var(--secondary);position:relative;z-index:5;transition:color .3s ease;
   }
   .tab svg{display:block;transition:transform .3s ease, opacity .3s ease}
@@ -547,16 +523,16 @@
   .tab.active .label{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4)}
   .tab.active svg{transform:translateY(-1px) scale(1.06)}
   .tab:not(.active) svg{opacity:.85}
-  .tab:active svg{transform:translateY(1px) scale(.94)}
 
   .toast{
-    position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 108px);
+    position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 112px);
     transform:translate(-50%,14px);
     background:rgba(58,44,52,.94);color:var(--accent-2);
-    font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:16px;
+    font-size:13px;font-weight:700;padding:11px 18px;
+    border-radius:44% 56% 50% 50% / 52% 48% 54% 46%;
     opacity:0;pointer-events:none;
     transition:opacity .22s ease, transform .22s ease;
-    z-index:9;max-width:82vw;text-align:center;
+    z-index:9;max-width:84vw;text-align:center;
     box-shadow:0 8px 20px rgba(40,20,30,.4);
   }
   .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -564,18 +540,18 @@
   .goo-svg{position:absolute;width:0;height:0}
 
   @media (max-width:360px){
-    h1{font-size:34px}
+    h1{font-size:26px}
     .tab .label{font-size:8.5px;letter-spacing:.3px}
-    .weather .temp{font-size:52px}
-    .clock-line{font-size:56px}
-    .clock-line.sec-line{font-size:24px}
-    .blob,.blob .b1{width:56px;height:56px}
-    .blob .b2{width:34px;height:34px;left:11px;top:30px}
-    .blob-glow{width:84px;height:84px}
+    .b-time .hh,.b-time .mm{font-size:44px}
+    .b-date .dn{font-size:50px}
+    .b-temp .val{font-size:50px}
+    .blob{width:56px;height:56px}
+    .blob::before{left:9px;top:6px;width:20px;height:13px}
   }
   @media (prefers-reduced-motion:reduce){
     *{animation:none !important}
-    .blob,.blob-glow{transition:transform .2s ease}
+    .blob{transition:transform .2s ease}
+    .agenda-form{transition:none}
   }
 </style>
 </head>
@@ -607,93 +583,106 @@
 
   <main id="main">
 
-    <!-- ============ ACCUEIL : marbre + horloge pierre ============ -->
+    <!-- ================= ACCUEIL ================= -->
     <section class="view active" id="view-accueil">
-      <div class="clock" aria-label="Heure actuelle">
-        <div class="clock-hello" id="clockHello">Bienvenue</div>
-        <div class="clock-inner">
-          <div class="clock-stack">
-            <div class="clock-line" id="ckH">--</div>
-            <div class="clock-line" id="ckM">--</div>
-            <div class="clock-line sec-line" id="ckS">--</div>
-          </div>
-          <div class="clock-day" id="ckDay">—</div>
+      <div class="home-row">
+        <!-- bulle 1 : l'heure seule -->
+        <div class="bubble b-time" aria-label="Heure actuelle">
+          <div class="hello" id="clockHello">Bienvenue</div>
+          <div class="hh" id="ckH">--</div>
+          <div class="mm" id="ckM">--</div>
+          <div class="ss" id="ckS">--</div>
         </div>
-        <div style="text-align:center">
-          <span class="clock-badge"><span id="clockSkyIcon">🌙</span> <span id="clockSky">Le ciel affiche : —</span></span>
-        </div>
-      </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        <div class="carve" style="padding:16px 14px">
-          <div style="position:relative;z-index:1">
-            <div class="panel-label">AUJOURD'HUI</div>
-            <div id="homeDate" style="font-size:15px;font-weight:800;color:var(--accent-2);margin-top:6px;line-height:1.3">—</div>
+        <!-- bulle 2 : le jour -->
+        <div class="bubble b-date" aria-label="Date du jour">
+          <div class="dw" id="ckDw">MER.</div>
+          <div class="dn" id="ckDn">--</div>
+          <div class="dm" id="ckDm">—</div>
+          <div style="margin-top:8px">
+            <span class="clock-badge"><span id="clockSkyIcon">✨</span> <span id="clockSky">Le ciel suit l'heure</span></span>
           </div>
-        </div>
-        <div class="carve" style="padding:16px 14px">
-          <div style="position:relative;z-index:1">
-            <div class="panel-label">ÉVÉNEMENTS</div>
-            <div style="font-size:30px;font-weight:900;color:var(--accent-2);margin-top:2px;line-height:1">
-              <span id="homeCount">0</span>
-            </div>
+          <div style="margin-top:10px;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--primary)">
+            <span id="homeCount">0</span> ÉVÉNEMENT(S)
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ MÉTÉO : papier + panneaux pierre ============ -->
+    <!-- ================= MÉTÉO ================= -->
     <section class="view" id="view-meteo">
-      <div class="carve weather">
-        <div class="place" id="wxPlace">MA POSITION</div>
-        <div class="wicon" id="wxIcon">🌡️</div>
-        <div class="temp" id="wxTemp">—°</div>
-        <div class="wdesc" id="wxDesc">Chargement…</div>
-        <div class="chips">
-          <span class="chip">🌡️ <span id="wxFeels">—</span></span>
-          <span class="chip">💨 <span id="wxWind">—</span></span>
-          <span class="chip">💧 <span id="wxHum">—</span></span>
+      <div class="wx-hero">
+        <!-- grande bulle : température -->
+        <div class="bubble b-temp">
+          <div class="place" id="wxPlace">MA POSITION</div>
+          <div class="ico" id="wxIcon">🌡️</div>
+          <div class="val" id="wxTemp">—°</div>
+          <div class="desc" id="wxDesc">Chargement…</div>
         </div>
-        <div class="chips">
-          <span class="chip">🌅 <span id="wxSunrise">—</span></span>
-          <span class="chip">🌇 <span id="wxSunset">—</span></span>
+
+        <!-- deux petites bulles -->
+        <div class="wx-mini">
+          <div class="bubble b-mini">
+            <div class="lbl">Ressenti</div>
+            <div class="val" id="wxFeels">—°</div>
+            <div class="sub" id="wxWind">—</div>
+          </div>
+          <div class="bubble b-mini">
+            <div class="lbl">Humidité</div>
+            <div class="val" id="wxHum">—%</div>
+            <div class="sub" id="wxSunrise">—</div>
+          </div>
         </div>
-        <div class="wmeta" id="wxMeta">—</div>
       </div>
 
-      <div class="carve weather grid" id="wxWeek"></div>
+      <!-- une bulle par jour -->
+      <div class="wx-days" id="wxWeek"></div>
+
+      <div class="wx-sun">
+        <div class="bubble">
+          <div class="lbl" style="font-size:10.5px;font-weight:900;letter-spacing:1px;color:var(--primary)">🌅 Lever</div>
+          <div class="val" id="wxSunriseVal" style="font-size:20px;font-weight:900;color:#ece6da;margin-top:2px">—</div>
+        </div>
+        <div class="bubble">
+          <div class="lbl" style="font-size:10.5px;font-weight:900;letter-spacing:1px;color:var(--primary)">🌇 Coucher</div>
+          <div class="val" id="wxSunsetVal" style="font-size:20px;font-weight:900;color:#ece6da;margin-top:2px">—</div>
+        </div>
+      </div>
+
+      <div class="wx-meta" id="wxMeta">—</div>
 
       <button class="btn-carve" id="wxRefresh" type="button">
         <span class="plus" aria-hidden="true">↻</span><span>Actualiser</span>
       </button>
     </section>
 
-    <!-- ============ AGENDA : marbre + pierre + horloge pierre ============ -->
+    <!-- ================= AGENDA ================= -->
     <section class="view" id="view-agenda">
-      <div class="clock" style="padding:18px 16px">
-        <div class="clock-inner">
-          <div class="clock-stack">
-            <div class="clock-line" id="ckH2" style="font-size:44px">--</div>
-            <div class="clock-line" id="ckM2" style="font-size:44px">--</div>
-          </div>
-          <div class="clock-day" id="ckDay2" style="margin-top:8px">—</div>
-        </div>
+      <div class="agenda-head">
+        <button class="fab-plus" id="fabPlus" type="button" aria-expanded="false"
+                aria-controls="agendaForm" aria-label="Ajouter un événement">
+          <span aria-hidden="true">+</span>
+        </button>
       </div>
 
-      <div class="carve form" aria-label="Nouvel événement">
-        <div class="field is-empty" data-label="Titre de l'événement...">
-          <input id="titre" type="text" maxlength="80" autocomplete="off"
-                 placeholder="Titre de l'événement..." aria-label="Titre de l'événement">
+      <div class="agenda-form" id="agendaForm">
+        <div class="inner">
+          <div class="carve" aria-label="Nouvel événement">
+            <div class="field">
+              <input id="titre" type="text" maxlength="80" autocomplete="off"
+                     placeholder="Titre de l'événement" aria-label="Titre de l'événement">
+            </div>
+            <div class="field">
+              <input id="date" type="date" aria-label="Date de l'événement">
+            </div>
+            <div class="field">
+              <input id="heure" type="time" aria-label="Heure de l'événement">
+            </div>
+            <button class="btn-carve" id="ajouter" type="button">
+              <span class="plus" aria-hidden="true">+</span><span>Ajouter</span>
+            </button>
+          </div>
         </div>
-        <div class="field">
-          <input id="date" type="date" aria-label="Date de l'événement">
-        </div>
-        <div class="field">
-          <input id="heure" type="time" aria-label="Heure de l'événement">
-        </div>
-        <button class="btn-carve" id="ajouter" type="button">
-          <span class="plus" aria-hidden="true">+</span><span>Ajouter</span>
-        </button>
       </div>
 
       <div class="list" id="liste" aria-live="polite" aria-label="Mes événements">
@@ -701,12 +690,12 @@
       </div>
     </section>
 
-    <!-- ============ NOTES : papier + panneaux pierre ============ -->
+    <!-- ================= NOTES ================= -->
     <section class="view" id="view-notes">
       <div class="carve form" aria-label="Nouvelle note">
         <div class="field">
           <textarea id="noteTxt" rows="3" maxlength="600"
-                    placeholder="Écrivez votre note..." aria-label="Texte de la note"></textarea>
+                    placeholder="Écrivez votre note…" aria-label="Texte de la note"></textarea>
         </div>
         <button class="btn-carve" id="noteAdd" type="button">
           <span class="plus" aria-hidden="true">+</span><span>Nouvelle note</span>
@@ -718,34 +707,24 @@
       </div>
     </section>
 
-    <!-- ============ RÉGLAGES : marbre + pierre + horloge pierre ============ -->
+    <!-- ================= RÉGLAGES ================= -->
     <section class="view" id="view-reglages">
-      <div class="clock" style="padding:18px 16px">
-        <div class="clock-inner">
-          <div class="clock-stack">
-            <div class="clock-line" id="ckH3" style="font-size:40px">--</div>
-            <div class="clock-line" id="ckM3" style="font-size:40px">--</div>
-          </div>
-          <div class="clock-day" id="ckDay3" style="margin-top:8px">—</div>
-        </div>
-      </div>
-
-      <div class="carve" style="padding:18px 16px">
-        <div class="panel-label">☁️ MODE DU CIEL</div>
-        <div id="skyModes" style="position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px"></div>
-        <div class="panel-note" style="margin-top:12px">
+      <div class="carve" style="padding:20px 18px">
+        <span class="panel-label">☁️ MODE DU CIEL</span>
+        <div id="skyModes" style="position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px"></div>
+        <span class="panel-note" style="margin-top:14px">
           En mode Auto, le ciel suit l'heure : aube le matin, jour clair, coucher orangé,
-          crépuscule violet, nuit étoilée le soir. La barre du bas prend la même couleur.
-        </div>
+          crépuscule violet, nuit étoilée. La bille du bas prend la même couleur.
+        </span>
       </div>
 
-      <div class="carve" style="padding:18px 16px">
-        <div class="panel-label">👤 VOTRE PRÉNOM</div>
-        <div class="field" style="margin:12px 0 8px">
+      <div class="carve" style="padding:20px 18px">
+        <span class="panel-label">👤 VOTRE PRÉNOM</span>
+        <div class="field" style="margin:14px 0 10px">
           <input id="prenom" type="text" maxlength="30" autocomplete="off"
                  placeholder="Laurianne" aria-label="Votre prénom">
         </div>
-        <div class="panel-note">Utilisé pour vous saluer sur la page d'accueil.</div>
+        <span class="panel-note">Utilisé pour vous saluer sur la page d'accueil.</span>
       </div>
 
       <div class="carve-grid" id="settingsGrid"></div>
@@ -754,11 +733,7 @@
   </main>
 
   <div class="tabbar-wrap">
-    <div class="blob-glow" id="blobGlow" aria-hidden="true"></div>
-    <div class="blob" id="blob" aria-hidden="true">
-      <i class="b1"></i><i class="b2"></i><i class="b3"></i>
-    </div>
-    <div class="blob-glass" id="blobGlass" aria-hidden="true"></div>
+    <div class="blob" id="blob" aria-hidden="true"><i></i></div>
     <nav aria-label="Navigation principale">
     <button class="tab" data-view="accueil" type="button">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -799,8 +774,8 @@
 (function(){
   "use strict";
 
-  var EV_KEY="agenda.events.v4", NOTE_KEY="agenda.notes.v4",
-      VIEW_KEY="agenda.lastview.v4", THEME_KEY="agenda.skytheme.v1",
+  var EV_KEY="agenda.events.v5", NOTE_KEY="agenda.notes.v5",
+      VIEW_KEY="agenda.lastview.v5", THEME_KEY="agenda.skytheme.v1",
       NAME_KEY="agenda.prenom.v1";
 
   var $app=document.getElementById("app"), $title=document.getElementById("pageTitle"),
@@ -812,26 +787,29 @@
 
   var $titre=document.getElementById("titre"), $date=document.getElementById("date"),
       $heure=document.getElementById("heure"), $ajouter=document.getElementById("ajouter"),
-      $liste=document.getElementById("liste"), $empty=document.getElementById("empty");
+      $liste=document.getElementById("liste"), $empty=document.getElementById("empty"),
+      $fabPlus=document.getElementById("fabPlus"), $agendaForm=document.getElementById("agendaForm");
 
   var $noteTxt=document.getElementById("noteTxt"), $noteAdd=document.getElementById("noteAdd"),
       $notesList=document.getElementById("notesList"), $notesEmpty=document.getElementById("notesEmpty");
 
-  var $homeDate=document.getElementById("homeDate"), $homeCount=document.getElementById("homeCount");
+  var $homeCount=document.getElementById("homeCount");
 
   var $wxPlace=document.getElementById("wxPlace"), $wxIcon=document.getElementById("wxIcon"),
       $wxTemp=document.getElementById("wxTemp"), $wxDesc=document.getElementById("wxDesc"),
       $wxFeels=document.getElementById("wxFeels"), $wxWind=document.getElementById("wxWind"),
       $wxHum=document.getElementById("wxHum"), $wxSunrise=document.getElementById("wxSunrise"),
-      $wxSunset=document.getElementById("wxSunset"), $wxMeta=document.getElementById("wxMeta"),
-      $wxWeek=document.getElementById("wxWeek"), $wxRefresh=document.getElementById("wxRefresh");
+      $wxSunriseVal=document.getElementById("wxSunriseVal"), $wxSunsetVal=document.getElementById("wxSunsetVal"),
+      $wxMeta=document.getElementById("wxMeta"), $wxWeek=document.getElementById("wxWeek"),
+      $wxRefresh=document.getElementById("wxRefresh");
 
-  var $blob=document.getElementById("blob"), $blobGlow=document.getElementById("blobGlow");
-  var $blobGlass=document.getElementById("blobGlass");
+  var $blob=document.getElementById("blob");
   var $skyModes=document.getElementById("skyModes"), $prenom=document.getElementById("prenom");
   var $settingsGrid=document.getElementById("settingsGrid");
   var $clockHello=document.getElementById("clockHello"), $clockSky=document.getElementById("clockSky");
   var $clockSkyIcon=document.getElementById("clockSkyIcon");
+  var $ckH=document.getElementById("ckH"), $ckM=document.getElementById("ckM"), $ckS=document.getElementById("ckS");
+  var $ckDw=document.getElementById("ckDw"), $ckDn=document.getElementById("ckDn"), $ckDm=document.getElementById("ckDm");
 
   function loadKey(k){
     try{ var r=localStorage.getItem(k); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }
@@ -844,7 +822,9 @@
   var loadNotes=function(){ return loadKey(NOTE_KEY); };
 
   var JOURS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+  var JOURS_AB=["DIM.","LUN.","MAR.","MER.","JEU.","VEN.","SAM."];
   var MOIS=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+  var MOIS_AB=["Janv.","Févr.","Mars","Avr.","Mai","Juin","Juil.","Août","Sept.","Oct.","Nov.","Déc."];
   var JOURS_C=["DIM","LUN","MAR","MER","JEU","VEN","SAM"];
 
   function pad(n){ return n<10?"0"+n:String(n); }
@@ -867,7 +847,7 @@
     var p=iso.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]);
     var parts=[]; var lab=dayLabel(iso);
     if(lab) parts.push(lab);
-    parts.push(JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()]);
+    parts.push(JOURS_AB[d.getDay()]+" "+d.getDate()+" "+MOIS_AB[d.getMonth()]);
     if(hm) parts.push(hm);
     return parts.join(" · ");
   }
@@ -880,7 +860,6 @@
     var j=Math.floor(h/24);
     return j===1?"hier":"il y a "+j+" jours";
   }
-
   function toast(m){
     $toast.textContent=m; $toast.classList.add("show");
     clearTimeout(toast._t);
@@ -894,24 +873,22 @@
     for(var i=0;i<rows.length;i++) rows[i].remove();
     $empty.style.display=events.length?"none":"block";
 
-    events.forEach(function(ev){
+    events.forEach(function(ev,idx){
       var card=document.createElement("article");
-      card.className="carve event";
-      var body=document.createElement("div"); body.className="body";
-
-      var ini=document.createElement("span"); ini.className="initial";
-      ini.textContent=(ev.titre||"?").trim().charAt(0).toUpperCase()||"?";
-      body.appendChild(ini);
+      card.className="bubble event";
+      /* variante de forme selon l'index : aucune bulle identique */
+      var shapes=["var(--blob-a)","var(--blob-b)","var(--blob-c)","var(--blob-d)"];
+      card.style.borderRadius=shapes[idx%4];
 
       var when=document.createElement("div"); when.className="when";
-      when.textContent=formatWhen(ev.date,ev.heure); body.appendChild(when);
+      when.textContent=formatWhen(ev.date,ev.heure);
 
       var note=document.createElement("div"); note.className="note";
-      note.textContent=ev.titre||"Sans titre"; body.appendChild(note);
+      note.textContent=ev.titre||"Sans titre";
 
       var del=document.createElement("button"); del.className="del"; del.type="button";
       del.setAttribute("aria-label","Supprimer « "+(ev.titre||"événement")+" »");
-      del.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 6.6h14.8M9.4 6.6V4.8h5.2v1.8"/><path d="M6.6 6.6l1 12.1a1.8 1.8 0 0 0 1.8 1.7h5.2a1.8 1.8 0 0 0 1.8-1.7l1-12.1"/><path d="M10.4 10.2v6.6M13.6 10.2v6.6"/></svg>';
+      del.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 6.6h14.8M9.4 6.6V4.8h5.2v1.8"/><path d="M6.6 6.6l1 12.1a1.8 1.8 0 0 0 1.8 1.7h5.2a1.8 1.8 0 0 0 1.8-1.7l1-12.1"/></svg>';
       del.addEventListener("click",function(){
         card.classList.add("leaving");
         setTimeout(function(){
@@ -920,7 +897,7 @@
         },190);
       });
 
-      card.appendChild(body); card.appendChild(del);
+      card.appendChild(when); card.appendChild(note); card.appendChild(del);
       $liste.appendChild(card);
     });
   }
@@ -932,27 +909,37 @@
     list.unshift({ id:String(Date.now())+Math.random().toString(16).slice(2,6),
       titre:t, date:$date.value||isoToday(), heure:$heure.value||nowHM() });
     saveKey(EV_KEY,list);
-    $titre.value=""; $date.value=""; $heure.value="";
-    refreshTitre(); renderEvents(); renderHome();
+    $titre.value=""; $date.value=isoToday(); $heure.value=nowHM();
+    renderEvents(); renderHome();
+    closeForm();
     toast("Événement ajouté.");
   }
   $ajouter.addEventListener("click",addEvent);
 
-  function refreshTitre(){
-    var f=$titre.closest(".field");
-    if(f) f.classList.toggle("is-empty", $titre.value.length===0);
-  }
-  $titre.addEventListener("input",refreshTitre);
   [$titre,$date,$heure].forEach(function(el){
     el.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); addEvent(); } });
   });
 
+  /* le bouton + déplie / replie le formulaire */
+  function openForm(){
+    $agendaForm.classList.add("open");
+    $fabPlus.classList.add("open");
+    $fabPlus.setAttribute("aria-expanded","true");
+    setTimeout(function(){ try{ $titre.focus(); }catch(e){} },320);
+  }
+  function closeForm(){
+    $agendaForm.classList.remove("open");
+    $fabPlus.classList.remove("open");
+    $fabPlus.setAttribute("aria-expanded","false");
+  }
+  $fabPlus.addEventListener("click",function(){
+    if($agendaForm.classList.contains("open")) closeForm(); else openForm();
+  });
+
   function renderHome(){
-    var d=new Date();
-    $homeDate.textContent=JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()];
     $homeCount.textContent=String(loadEvents().length);
     var p=loadStr(NAME_KEY,"").trim();
-    $clockHello.textContent = p ? ("Bonne journée, "+p) : "Bienvenue";
+    $clockHello.textContent = p ? ("Bonjour "+p) : "Bienvenue";
   }
 
   /* ---------- NOTES ---------- */
@@ -962,23 +949,21 @@
     for(var i=0;i<rows.length;i++) rows[i].remove();
     $notesEmpty.style.display=notes.length?"none":"block";
 
-    notes.forEach(function(n){
-      var card=document.createElement("article"); card.className="carve note-card";
-      var body=document.createElement("div"); body.className="body";
-
-      var ini=document.createElement("span"); ini.className="initial";
-      ini.textContent=(n.texte||"?").trim().charAt(0).toUpperCase()||"?";
-      body.appendChild(ini);
+    notes.forEach(function(n,idx){
+      var card=document.createElement("article");
+      card.className="bubble note-card";
+      var shapes=["var(--blob-b)","var(--blob-c)","var(--blob-d)","var(--blob-a)"];
+      card.style.borderRadius=shapes[idx%4];
 
       var meta=document.createElement("div"); meta.className="meta";
-      meta.textContent=relativeNote(n.ts); body.appendChild(meta);
+      meta.textContent=relativeNote(n.ts);
 
       var txt=document.createElement("div"); txt.className="txt";
-      txt.textContent=n.texte; body.appendChild(txt);
+      txt.textContent=n.texte;
 
       var del=document.createElement("button"); del.className="del"; del.type="button";
       del.setAttribute("aria-label","Supprimer la note");
-      del.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 6.6h14.8M9.4 6.6V4.8h5.2v1.8"/><path d="M6.6 6.6l1 12.1a1.8 1.8 0 0 0 1.8 1.7h5.2a1.8 1.8 0 0 0 1.8-1.7l1-12.1"/><path d="M10.4 10.2v6.6M13.6 10.2v6.6"/></svg>';
+      del.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 6.6h14.8M9.4 6.6V4.8h5.2v1.8"/><path d="M6.6 6.6l1 12.1a1.8 1.8 0 0 0 1.8 1.7h5.2a1.8 1.8 0 0 0 1.8-1.7l1-12.1"/></svg>';
       del.addEventListener("click",function(){
         card.classList.add("leaving");
         setTimeout(function(){
@@ -987,7 +972,7 @@
         },190);
       });
 
-      card.appendChild(body); card.appendChild(del);
+      card.appendChild(meta); card.appendChild(txt); card.appendChild(del);
       $notesList.appendChild(card);
     });
   }
@@ -1017,32 +1002,42 @@
     $wxIcon.textContent=info[1];
     $wxTemp.textContent=Math.round(cur.temperature_2m)+"°";
     $wxDesc.textContent=info[0];
-    $wxFeels.textContent="Ressenti "+Math.round(cur.apparent_temperature)+"°";
+    $wxFeels.textContent=Math.round(cur.apparent_temperature)+"°";
     $wxWind.textContent="Vent "+Math.round(cur.wind_speed_10m)+" km/h";
-    $wxHum.textContent="Humidité "+(cur.relative_humidity_2m!=null?Math.round(cur.relative_humidity_2m)+"%":"—");
+    $wxHum.textContent=(cur.relative_humidity_2m!=null?Math.round(cur.relative_humidity_2m)+"%":"—");
     $wxPlace.textContent=(data.label||"MA POSITION").toUpperCase();
     $wxMeta.textContent="Mis à jour à "+pad(new Date().getHours())+"h"+pad(new Date().getMinutes());
 
     var d=data.daily;
     if(d && d.sunrise && d.sunrise[0]){
-      $wxSunrise.textContent="Lever "+d.sunrise[0].split("T")[1];
-      $wxSunset.textContent="Coucher "+d.sunset[0].split("T")[1];
+      $wxSunriseVal.textContent=d.sunrise[0].split("T")[1];
+      $wxSunsetVal.textContent=d.sunset[0].split("T")[1];
     }
+
+    /* une bulle par jour */
     $wxWeek.innerHTML="";
-    for(var i=0;i<d.time.length && i<5;i++){
+    var n=Math.min(d.time.length,5);
+    for(var i=0;i<n;i++){
       var p=d.time[i].split("-");
       var dd=new Date(+p[0],+p[1]-1,+p[2]);
       var di=wxInfo(d.weather_code[i]);
+
       var cell=document.createElement("div");
-      cell.className="weather-day"+(i===0?" today":"");
+      cell.className="bubble b-day"+(i===0?" today":"");
+
       var dl=document.createElement("div"); dl.className="d";
-      dl.textContent=i===0?"AUJ.":JOURS_C[dd.getDay()]; cell.appendChild(dl);
+      dl.textContent=i===0?"AUJ.":JOURS_C[dd.getDay()];
+
       var il=document.createElement("div"); il.className="i";
-      il.textContent=di[1]; cell.appendChild(il);
+      il.textContent=di[1];
+
       var tx=document.createElement("div"); tx.className="t";
-      tx.textContent=Math.round(d.temperature_2m_max[i])+"°"; cell.appendChild(tx);
+      tx.textContent=Math.round(d.temperature_2m_max[i])+"°";
+
       var mn=document.createElement("div"); mn.className="m";
-      mn.textContent=Math.round(d.temperature_2m_min[i])+"°"; cell.appendChild(mn);
+      mn.textContent=Math.round(d.temperature_2m_min[i])+"°";
+
+      cell.appendChild(dl); cell.appendChild(il); cell.appendChild(tx); cell.appendChild(mn);
       $wxWeek.appendChild(cell);
     }
   }
@@ -1050,11 +1045,11 @@
   function fetchWeather(){
     if(!navigator.geolocation){
       $wxPlace.textContent="MÉTÉO INDISPONIBLE";
-      $wxDesc.textContent="La géolocalisation n'est pas disponible ici.";
+      $wxDesc.textContent="Géolocalisation absente";
       $wxMeta.textContent="Ouvrez la page dans un vrai navigateur.";
       return;
     }
-    $wxDesc.textContent="Recherche de votre position…";
+    $wxDesc.textContent="Recherche de la position…";
     var settled=false;
     var guard=setTimeout(function(){
       if(settled) return; settled=true;
@@ -1065,7 +1060,7 @@
     navigator.geolocation.getCurrentPosition(function(pos){
       if(settled) return; settled=true; clearTimeout(guard);
       var lat=pos.coords.latitude.toFixed(4), lon=pos.coords.longitude.toFixed(4);
-      $wxDesc.textContent="Chargement des conditions…";
+      $wxDesc.textContent="Chargement…";
       var url="https://api.open-meteo.com/v1/forecast"
         +"?latitude="+lat+"&longitude="+lon
         +"&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m"
@@ -1074,7 +1069,7 @@
       fetch(url).then(function(r){ return r.json(); })
         .then(function(data){ wxLast=data; paintWeather(data); })
         .catch(function(){
-          $wxDesc.textContent="Impossible de charger la météo";
+          $wxDesc.textContent="Chargement impossible";
           $wxMeta.textContent="Vérifiez la connexion, puis touchez Actualiser.";
         });
     },function(){
@@ -1089,7 +1084,7 @@
     fetchWeather(); toast("Actualisation…");
   });
 
-  /* ---------- MÉTABALL ---------- */
+  /* ---------- BILLE DE VERRE (métaball) ---------- */
   var tabEls=document.querySelectorAll(".tab");
 
   function placeBlob(btn,animate){
@@ -1102,22 +1097,11 @@
     var cx=(box.left-navBox.left)+box.width/2;
     var cy=(box.top-wrapBox.top)+box.height/2;
     var size=$blob.offsetWidth, half=size/2;
-    var x=cx-half, y=cy-half;   /* centré sur le bouton : plus de débordement */
+    var x=cx-half, y=cy-half;
 
-    if(animate===false){
-      $blob.style.transition="none";
-      $blobGlass.style.transition="none";
-      $blobGlow.style.transition="none";
-    }
+    if(animate===false) $blob.style.transition="none";
     $blob.style.transform="translate3d("+x+"px,"+y+"px,0)";
-    $blobGlass.style.transform="translate3d("+x+"px,"+y+"px,0)";
-    $blobGlow.style.transform="translate3d("+(x+(size-96)/2)+"px,"+(y+(size-96)/2)+"px,0)";
-    if(animate===false){
-      void $blob.offsetWidth;
-      $blob.style.transition="";
-      $blobGlass.style.transition="";
-      $blobGlow.style.transition="";
-    }
+    if(animate===false){ void $blob.offsetWidth; $blob.style.transition=""; }
   }
 
   /* ---------- THÈMES DU CIEL ---------- */
@@ -1146,20 +1130,14 @@
   function applySky(){
     var t=effectiveTheme();
     var th=SKY_THEMES[t];
-
     document.documentElement.style.setProperty("--accent",th.accent);
 
-    // AUTO suit l'heure : le ciel s'affiche toujours sur l'ACCUEIL, avec le
-    // thème effectif (aube / jour / coucher / crépuscule / nuit). Le badge
-    // nomme le thème réellement affiché, avec l'émoji correspondant.
     var isAuto=(currentTheme==="auto");
     var onHome=(currentView==="accueil");
 
     var ICONS={aube:"🌅",jour:"☀️",coucher:"🌇",crepuscule:"🌆",nuit:"🌙"};
     $clockSkyIcon.textContent=ICONS[t]||"✨";
-    $clockSky.textContent = isAuto
-      ? "Auto · "+th.skyName
-      : "Le ciel affiche : "+th.skyName;
+    $clockSky.textContent = isAuto ? ("Auto · "+th.skyName) : th.skyName;
 
     $skyLayer.classList.toggle("on",onHome);
 
@@ -1169,14 +1147,14 @@
     else if(t==="coucher")    g="linear-gradient(180deg,#5a4054 0%,#a05c7e 40%,#eb6e9b 72%,#f5cdd0 100%)";
     else if(t==="crepuscule") g="linear-gradient(180deg,#2e2440 0%,#5a4270 45%,#8b6aa8 78%,#a98bc4 100%)";
     else if(t==="nuit")       g="linear-gradient(180deg,#141020 0%,#241c34 48%,#3a2e50 100%)";
-    else                      g="linear-gradient(180deg,#f5cdd0 0%,#e69cba 46%,#dbe8f5 100%)";
+    else                      g="linear-gradient(180deg,#daf0fb 0%,#bfe3f7 42%,#d8ecf8 72%,#f3e6ef 100%)";
     $skyLayer.style.background=g;
 
     var nightish=(t==="nuit"||t==="crepuscule");
     $stars.classList.toggle("on",nightish);
     $moon.classList.toggle("on",nightish);
-
     $sunCele.style.opacity=(t==="nuit"||t==="crepuscule")?"0":"1";
+
     if(t==="aube"||t==="coucher"){
       $sunCele.style.background="radial-gradient(circle at 38% 34%, #fff3d0, #ffb0c4 52%, #eb6e9b 100%)";
       $sunCele.style.boxShadow="0 0 80px 38px rgba(235,110,155,.50)";
@@ -1196,14 +1174,15 @@
     THEME_ORDER.forEach(function(key){
       var th=SKY_THEMES[key];
       var b=document.createElement("button"); b.type="button";
-      b.style.cssText="appearance:none;border:0;cursor:pointer;font-family:inherit;padding:12px 6px;border-radius:18px;"+
+      b.style.cssText="appearance:none;border:0;cursor:pointer;font-family:inherit;padding:12px 6px;"+
+        "border-radius:46% 54% 50% 50% / 52% 48% 54% 46%;"+
         "display:flex;flex-direction:column;align-items:center;gap:7px;"+
         "background:"+(key===currentTheme?"rgba(235,110,155,.30)":"rgba(0,0,0,.30)")+";"+
         "box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 3px 8px rgba(0,0,0,.4);";
-      b.innerHTML='<span style="width:30px;height:30px;border-radius:50%;display:block;'+
+      b.innerHTML='<span style="width:28px;height:28px;border-radius:50%;display:block;'+
         'background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.9), '+th.accent+' 62%);'+
         'box-shadow:0 2px 6px rgba(0,0,0,.45)"></span>'+
-        '<span style="font-size:9.5px;font-weight:900;letter-spacing:.5px;color:#F5CDD0;'+
+        '<span style="font-size:9px;font-weight:900;letter-spacing:.4px;color:#F5CDD0;'+
         'text-shadow:0 1px 2px rgba(0,0,0,.7)">'+th.label+'</span>';
       b.addEventListener("click",function(){
         currentTheme=key; saveStr(THEME_KEY,key);
@@ -1224,12 +1203,12 @@
   /* ---------- RÉGLAGES ---------- */
   var SETTINGS=[["🎨","Apparence","Marbre & pierre"],["🔔","Notifications","Activées"],
     ["🌍","Langue","Français"],["📅","Calendrier","Semaine"],
-    ["💾","Données locales","Sauvegardées"],["ℹ️","À propos","ToKnow v1"],
-    ["🧹","Tout effacer","Supprime tout"],["📤","Exporter","Bientôt disponible"]];
+    ["💾","Données locales","Sauvegardées"],["ℹ️","À propos","ToKnow v2"],
+    ["🧹","Tout effacer","Supprime tout"],["📤","Exporter","Bientôt"]];
 
   SETTINGS.forEach(function(s){
     var b=document.createElement("button");
-    b.className="carve carve-tile"; b.type="button";
+    b.className="bubble b-tile"; b.type="button";
     b.innerHTML='<span class="ico">'+s[0]+'</span><span class="t">'+s[1]+'</span><span class="s">'+s[2]+'</span>';
     b.addEventListener("click",function(){
       var label=s[1];
@@ -1301,50 +1280,33 @@
     placeBlob(document.querySelector('.tab[data-view="'+currentView+'"]'),false);
   });
 
-  /* ---------- HORLOGE (heures au-dessus des minutes) ---------- */
-  var CLOCKS=[
-    {h:"ckH",  m:"ckM",  s:"ckS", d:"ckDay"},
-    {h:"ckH2", m:"ckM2", s:null,  d:"ckDay2"},
-    {h:"ckH3", m:"ckM3", s:null,  d:"ckDay3"}
-  ];
+  /* ---------- HORLOGE (heure + jour en deux bulles) ---------- */
   function tickClock(){
     var d=new Date();
-    var hh=pad(d.getHours()), mm=pad(d.getMinutes()), ss=pad(d.getSeconds());
-    var dayTxt=JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()];
-    CLOCKS.forEach(function(c){
-      var eh=document.getElementById(c.h), em=document.getElementById(c.m), ed=document.getElementById(c.d);
-      if(eh) eh.textContent=hh;
-      if(em) em.textContent=mm;
-      if(c.s){ var es=document.getElementById(c.s); if(es) es.textContent=ss; }
-      if(ed) ed.textContent=dayTxt;
-    });
+    $ckH.textContent=pad(d.getHours());
+    $ckM.textContent=pad(d.getMinutes());
+    $ckS.textContent=pad(d.getSeconds());
+    $ckDw.textContent=JOURS_AB[d.getDay()];
+    $ckDn.textContent=String(d.getDate());
+    $ckDm.textContent=MOIS_AB[d.getMonth()];
   }
 
   /* ---------- INIT ---------- */
   tickClock(); setInterval(tickClock,1000);
 
   $date.value=isoToday(); $heure.value=nowHM();
-  refreshTitre(); renderEvents(); renderNotes(); renderHome(); renderSkyModes();
+  renderEvents(); renderNotes(); renderHome(); renderSkyModes();
 
   var start="accueil";
   try{ var saved=localStorage.getItem(VIEW_KEY); if(saved && SCREENS[saved]) start=saved; }catch(e){}
   showView(start);
   if(start==="meteo") fetchWeather();
 
-  setTimeout(function(){ placeBlob(document.querySelector('.tab[data-view="'+currentView+'"]'),false); },120);
+  setTimeout(function(){ placeBlob(document.querySelector('.tab[data-view="'+currentView+'"]'),false); },140);
   window.addEventListener("load",function(){
     placeBlob(document.querySelector('.tab[data-view="'+currentView+'"]'),false);
   });
 })();
-</script>
-
-<!-- ToKnow — mode hors-ligne (facultatif : supprimez ce bloc si non souhaité) -->
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register("./sw.js").catch(function () {});
-    });
-  }
 </script>
 </body>
 </html>
