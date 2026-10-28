@@ -304,11 +304,12 @@
     border-radius:var(--blob-a);
     padding:14px;
   }
-  .b-time .hh{font-size:52px;font-weight:900;line-height:.96;color:#ece6da;
+  /* heures en rose (comme le « MER. »), minutes en blanc : la difference se lit */
+  .b-time .hh{font-size:52px;font-weight:900;line-height:.96;color:var(--accent-2);
     text-shadow:0 2px 0 #141416,0 6px 14px rgba(0,0,0,.7)}
-  .b-time .mm{font-size:52px;font-weight:900;line-height:.96;color:#ece6da;
+  .b-time .mm{font-size:52px;font-weight:900;line-height:.96;color:#ffffff;
     text-shadow:0 2px 0 #141416,0 6px 14px rgba(0,0,0,.7)}
-  .b-time .ss{font-size:20px;font-weight:800;color:var(--primary);letter-spacing:3px;margin-top:4px}
+  .b-time .ss{font-size:20px;font-weight:800;color:var(--primary);letter-spacing:3px;margin-top:4px;opacity:.85}
   .b-time .hello{font-size:11.5px;font-weight:800;letter-spacing:1px;color:var(--primary);
     text-transform:uppercase;margin-bottom:6px}
 
@@ -414,7 +415,7 @@
     margin-top:0;
   }
   .agenda-form > .inner{overflow:hidden}
-  .agenda-form.open{grid-template-rows:1fr;opacity:1;margin-top:2px}
+  .agenda-form.open{grid-template-rows:1fr;opacity:1;margin-top:2px;padding-bottom:10px}
   /* date et heure : deux petites bulles côte à côte, valeurs empilées */
   .mini-fields{display:flex;gap:12px;justify-content:center}
   .stack-field{
@@ -436,10 +437,18 @@
     text-shadow:0 2px 0 #141416,0 4px 10px rgba(0,0,0,.6);
   }
   .stack-val.sm{font-size:14px;color:var(--accent-2);letter-spacing:.5px}
-  .sr-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  /* champ natif couvrant toute la bulle : l'appui ouvre le sélecteur iOS */
+  .tap-input{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    opacity:0;cursor:pointer;
+    -webkit-appearance:none;appearance:none;
+    border:0;background:transparent;
+  }
+  .stack-field{position:relative}
 
   /* bouton d'enregistrement : petit rond, juste un + */
-  .fab-save{width:76px;height:76px;font-size:36px}
+  .fab-save{width:76px;height:76px;font-size:36px;margin-bottom:6px}
   .fab-refresh{width:66px;height:66px;font-size:30px}
 
   .agenda-form .form-bare{padding:0}
@@ -539,13 +548,19 @@
   /* ================================================================
      TAB BAR + BILLE DE VERRE (métaball)
      ================================================================ */
+  /* la barre est ancrée en bas : le contenu ne passe jamais dessous */
   .tabbar-wrap{
-    position:relative;z-index:3;
-    flex:0 0 auto;
-    margin:8px -14px 0;
-    padding:0 10px calc(env(safe-area-inset-bottom,0px) + 8px);
+    position:fixed;
+    left:0;right:0;
+    bottom:0;
+    z-index:20;
+    padding:8px 12px calc(env(safe-area-inset-bottom,0px) + 8px);
+    background:transparent;
     isolation:isolate;
   }
+  /* espace reserve sous le contenu, pour que la barre ne le masque pas */
+  main{padding-bottom:120px}
+  .app{overflow:hidden}
 
   .blob{
     position:absolute;top:0;left:0;height:64px;width:64px;
@@ -973,17 +988,19 @@
                      placeholder="Titre de l'événement" aria-label="Titre de l'événement">
             </div>
             <div class="mini-fields">
-              <div class="stack-field" id="dateStack" role="group" aria-label="Date de l'événement">
+              <div class="stack-field" id="dateStack" aria-label="Date de l'événement">
                 <div class="stack-val" id="stDay">28</div>
                 <div class="stack-val sm" id="stMonth">Oct.</div>
                 <div class="stack-val sm" id="stYear">26</div>
-                <input id="date" type="date" class="sr-hidden" aria-label="Date de l'événement">
+                <!-- champ natif : invisible mais bien au-dessus de la bulle,
+                     donc un appui dessus ouvre le selecteur iOS -->
+                <input id="date" type="date" class="tap-input" aria-label="Date de l'événement">
               </div>
 
-              <div class="stack-field" id="timeStack" role="group" aria-label="Heure de l'événement">
+              <div class="stack-field" id="timeStack" aria-label="Heure de l'événement">
                 <div class="stack-val" id="stHour">19</div>
                 <div class="stack-val" id="stMin">11</div>
-                <input id="heure" type="time" class="sr-hidden" aria-label="Heure de l'événement">
+                <input id="heure" type="time" class="tap-input" aria-label="Heure de l'événement">
               </div>
             </div>
             <div class="agenda-head" style="margin-top:6px">
@@ -1123,6 +1140,8 @@
   var $clockSkyIcon=null;
   var $ckH=document.getElementById("ckH"), $ckM=document.getElementById("ckM"), $ckS=document.getElementById("ckS");
   var $ckDw=document.getElementById("ckDw"), $ckDn=document.getElementById("ckDn"), $ckDm=document.getElementById("ckDm");
+  var $stDay=document.getElementById("stDay"), $stMonth=document.getElementById("stMonth"), $stYear=document.getElementById("stYear");
+  var $stHour=document.getElementById("stHour"), $stMin=document.getElementById("stMin");
 
   function loadKey(k){
     try{ var r=localStorage.getItem(k); var a=r?JSON.parse(r):[]; return Array.isArray(a)?a:[]; }
@@ -1233,6 +1252,27 @@
   [$titre,$date,$heure].forEach(function(el){
     el.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); addEvent(); } });
   });
+
+  /* ---------- aperçu empilé de la date et de l'heure ----------
+     Les bulles affichent la valeur choisie et restent cliquables :
+     le champ natif les recouvre (.tap-input) pour ouvrir le sélecteur iOS. */
+  function paintStacks(){
+    try{
+      var iv=$date.value||isoToday();
+      var p=iv.split("-");
+      $stDay.textContent=String(+p[2]);
+      $stMonth.textContent=MOIS_AB[+p[1]-1];
+      $stYear.textContent=p[0].slice(2);
+
+      var hm=($heure.value||nowHM()).split(":");
+      $stHour.textContent=hm[0];
+      $stMin.textContent=hm[1];
+    }catch(e){}
+  }
+  $date.addEventListener("change",paintStacks);
+  $date.addEventListener("input",paintStacks);
+  $heure.addEventListener("change",paintStacks);
+  $heure.addEventListener("input",paintStacks);
 
   /* le bouton + déplie / replie le formulaire */
   function openForm(){
@@ -1376,7 +1416,8 @@
     }
   }
 
-  function fetchWeather(){
+  function fetchWeather(force){
+    var skipCache = force===true;
     if(!navigator.geolocation){
       $wxPlace.textContent="MÉTÉO INDISPONIBLE";
       $wxDesc.textContent="Géolocalisation absente";
@@ -1410,12 +1451,14 @@
       if(settled) return; settled=true; clearTimeout(guard);
       $wxDesc.textContent="Position refusée";
       $wxMeta.textContent="Autorisez la localisation, puis touchez Actualiser.";
-    },{timeout:8000,maximumAge:300000});
+    },{timeout:8000,maximumAge: skipCache ? 0 : 300000});
   }
 
   $wxRefresh.addEventListener("click",function(){
-    if(wxLast){ paintWeather(wxLast); toast("Météo actualisée."); return; }
-    fetchWeather(); toast("Actualisation…");
+    /* on force toujours un vrai appel reseau, meme si on a deja des donnees */
+    wxLast=null;
+    toast("Actualisation…");
+    fetchWeather(true);
   });
 
   /* ---------- BILLE DE VERRE (métaball) ---------- */
@@ -1528,106 +1571,108 @@
 
   /* ---------- décors animés, un par thème ---------- */
   function byId(id){ return document.getElementById(id); }
-  var PLANES=[byId("plane1"),byId("plane2"),byId("plane3")];
-  var BATS=[byId("bat1"),byId("bat2"),byId("bat3")];
-  var SHOOTS=[byId("shoot1"),byId("shoot2"),byId("shoot3"),byId("shoot4"),byId("shoot5")];
-  var FIREFLIES=[byId("ff1"),byId("ff2"),byId("ff3"),byId("ff4"),byId("ff5"),byId("ff6"),
-                 byId("ff7"),byId("ff8"),byId("ff9"),byId("ff10"),byId("ff11"),byId("ff12")];
-  var BUTTERFLIES=[byId("bf1"),byId("bf2"),byId("bf3"),byId("bf4"),byId("bf5")];
-  var TWINKLES=[byId("tw1"),byId("tw2"),byId("tw3"),byId("tw4"),
-                byId("tw5"),byId("tw6"),byId("tw7"),byId("tw8")];
+  var ids=function(prefix,n){
+    var out=[]; for(var i=1;i<=n;i++){ var e=byId(prefix+i); if(e) out.push(e); } return out;
+  };
+  var PLANES   = ids("plane",3);
+  var BATS     = ids("bat",3);
+  var SHOOTS   = ids("shoot",5);
+  var FIREFLIES= ids("ff",12);
+  var BUTTERFLIES = ids("bf",5);
+  var TWINKLES = ids("tw",8);
   var crosserTimer=null;
 
   function restart(el){
     if(!el) return;
-    el.classList.remove("go");
-    void el.offsetWidth;
-    el.classList.add("go");
+    try{
+      el.classList.remove("go");
+      void el.offsetWidth;
+      el.classList.add("go");
+    }catch(e){}
   }
 
-  function clearFireflies(){
-    FIREFLIES.concat(TWINKLES).forEach(function(f){
-      if(f){ f.classList.remove("go"); f.style.left=""; f.style.top=""; f.style.opacity=""; f.style.animationDelay=""; }
-    });
+  function resetAll(){
+    try{
+      PLANES.concat(BATS).concat(SHOOTS).forEach(function(el){
+        if(el) el.classList.remove("go");
+      });
+      FIREFLIES.concat(TWINKLES).concat(BUTTERFLIES).forEach(function(el){
+        if(el){
+          el.classList.remove("go");
+          el.style.left=""; el.style.top=""; el.style.opacity="";
+          el.style.animationDelay="";
+        }
+      });
+    }catch(e){}
+  }
+
+  function scatterStars(list,count){
+    for(var i=0;i<count;i++){
+      var s=list[i]; if(!s) continue;
+      s.style.left=(5+Math.random()*88)+"vw";
+      s.style.top=(4+Math.random()*82)+"vh";
+      s.style.animationDelay=(Math.random()*3).toFixed(2)+"s";
+      (function(el,delay){
+        setTimeout(function(){ try{ el.classList.add("go"); }catch(e){} }, delay);
+      })(s, i*100);
+    }
   }
 
   function launchCrosser(){
     var t=effectiveTheme();
+    resetAll();
 
-    /* on remet tout a zero avant de lancer le decor du theme */
-    [].concat(PLANES,BATS,BIRDS,SHOOTS).forEach(function(el){
-      if(el) el.classList.remove("go");
-    });
-    FIREFLIES.concat(TWINKLES).forEach(function(el){
-      if(el){ el.classList.remove("go"); el.style.left=""; el.style.top=""; el.style.opacity=""; }
-    });
+    try{
+      if(t==="aube"){
+        scatterStars(TWINKLES,8);
+        BUTTERFLIES.forEach(function(b,i){
+          if(!b) return;
+          b.style.top=(28+Math.random()*48)+"vh";
+          setTimeout(function(){ restart(b); }, 300+i*800);
+        });
+        return;
+      }
 
-    /* --- AUBE : étoiles qui scintillent + papillons multicolores --- */
-    if(t==="aube"){
-      TWINKLES.forEach(function(s,i){
-        if(!s) return;
-        s.style.left=(6+Math.random()*86)+"vw";
-        s.style.top=(4+Math.random()*50)+"vh";
-        s.style.animationDelay=(Math.random()*3).toFixed(2)+"s";
-        setTimeout(function(){ s.classList.add("go"); }, i*90);
-      });
-      BUTTERFLIES.forEach(function(b,i){
-        if(!b) return;
-        b.style.top=(30+Math.random()*45)+"vh";
-        setTimeout(function(){ restart(b); }, 400+i*900);
-      });
-      return;
-    }
+      if(t==="jour"){
+        restart(PLANES[0]);
+        setTimeout(function(){ restart(PLANES[1]); }, 1600);
+        setTimeout(function(){ restart(PLANES[2]); }, 3600);
+        return;
+      }
 
-    /* --- JOUR : les trois avions --- */
-    if(t==="jour"){
-      restart(PLANES[0]);
-      if(PLANES[1]) setTimeout(function(){ restart(PLANES[1]); }, 1800);
-      if(PLANES[2]) setTimeout(function(){ restart(PLANES[2]); }, 4000);
-      return;
-    }
+      if(t==="coucher"){
+        restart(BATS[0]);
+        setTimeout(function(){ restart(BATS[1]); }, 1800);
+        setTimeout(function(){ restart(BATS[2]); }, 4000);
+        return;
+      }
 
-    /* --- COUCHER : les chauves-souris --- */
-    if(t==="coucher"){
-      restart(BATS[0]);
-      if(BATS[1]) setTimeout(function(){ restart(BATS[1]); }, 2000);
-      if(BATS[2]) setTimeout(function(){ restart(BATS[2]); }, 4400);
-      return;
-    }
+      if(t==="crepuscule"){
+        FIREFLIES.forEach(function(f,i){
+          if(!f) return;
+          setTimeout(function(){
+            f.style.left=(6+Math.random()*84)+"vw";
+            f.style.top=(38+Math.random()*50)+"vh";
+            restart(f);
+          }, i*380);
+        });
+        return;
+      }
 
-    /* --- CRÉPUSCULE : les lucioles (12), scintillement progressif --- */
-    if(t==="crepuscule"){
-      FIREFLIES.forEach(function(f,i){
-        if(!f) return;
-        setTimeout(function(){
-          f.style.left=(6+Math.random()*84)+"vw";
-          f.style.top=(40+Math.random()*50)+"vh";
-          restart(f);
-        }, i*420);
-      });
-      return;
-    }
-
-    /* --- NUIT : 5 étoiles filantes + étoiles qui scintillent --- */
-    restart(SHOOTS[0]);
-    if(SHOOTS[1]) setTimeout(function(){ restart(SHOOTS[1]); }, 900);
-    if(SHOOTS[2]) setTimeout(function(){ restart(SHOOTS[2]); }, 1900);
-    if(SHOOTS[3]) setTimeout(function(){ restart(SHOOTS[3]); }, 3000);
-    if(SHOOTS[4]) setTimeout(function(){ restart(SHOOTS[4]); }, 4100);
-
-    TWINKLES.forEach(function(s,i){
-      if(!s) return;
-      s.style.left=(5+Math.random()*88)+"vw";
-      s.style.top=(3+Math.random()*80)+"vh";
-      s.style.animationDelay=(Math.random()*3).toFixed(2)+"s";
-      setTimeout(function(){ s.classList.add("go"); }, i*120);
-    });
+      /* nuit */
+      restart(SHOOTS[0]);
+      setTimeout(function(){ restart(SHOOTS[1]); }, 900);
+      setTimeout(function(){ restart(SHOOTS[2]); }, 1900);
+      setTimeout(function(){ restart(SHOOTS[3]); }, 3000);
+      setTimeout(function(){ restart(SHOOTS[4]); }, 4100);
+      scatterStars(TWINKLES,8);
+    }catch(e){ /* un décor qui échoue ne doit pas casser l'app */ }
   }
 
   function scheduleCrossers(){
     if(crosserTimer) clearInterval(crosserTimer);
-    setTimeout(launchCrosser,2500);
-    crosserTimer=setInterval(launchCrosser,15000);   /* un passage toutes les 15 s */
+    setTimeout(launchCrosser,2000);
+    crosserTimer=setInterval(launchCrosser,15000);
   }
 
 
@@ -1732,6 +1777,7 @@
   tickClock(); setInterval(tickClock,1000);
 
   $date.value=isoToday(); $heure.value=nowHM();
+  paintStacks();
   renderEvents(); renderNotes(); renderHome(); renderSkyModes();
 
   var start="accueil";
