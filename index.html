@@ -400,6 +400,14 @@
   }
   .agenda-form > .inner{overflow:hidden}
   .agenda-form.open{grid-template-rows:1fr;opacity:1;margin-top:2px}
+  /* date + heure côte à côte, en petites bulles */
+  .mini-fields{display:flex;gap:12px}
+  .mini-fields .field{flex:1 1 0;min-width:0;margin-bottom:0;padding:13px 10px}
+  .mini-fields .field input{font-size:14.5px}
+
+  /* bouton d'enregistrement : petit rond, juste un + */
+  .fab-save{width:76px;height:76px;font-size:36px}
+
   .agenda-form .form-bare{padding:0}
   /* pas de plaque derrière : les ovales flottent sur le fond */
   .form-bare{background:none;box-shadow:none;border-radius:0}
@@ -423,15 +431,13 @@
   @keyframes lift{to{opacity:0;transform:translateX(28px) scale(.96)}}
   .event .when{font-size:15px;font-weight:800;color:var(--accent-2);line-height:1.35}
   .event .note{font-size:13.5px;font-weight:600;color:#cbb3c0;line-height:1.3}
-  .event .del{
+  /* même corbeille que sur l'écran Notes : un simple pictogramme rose */
+  .event .del, .note-card .del{
     position:absolute;top:10px;right:12px;z-index:3;
-    width:30px;height:30px;display:flex;align-items:center;justify-content:center;
-    border:0;border-radius:50%;cursor:pointer;padding:0;
-    color:#fff;line-height:0;
-    background:rgba(235,110,155,.85);
-    box-shadow:0 2px 6px rgba(0,0,0,.45);
+    border:0;background:transparent;cursor:pointer;padding:6px;
+    color:var(--primary);line-height:0;
   }
-  .event .del:active{transform:scale(.9)}
+  .event .del:active, .note-card .del:active{transform:scale(.9)}
   .event .del:active{transform:scale(.9)}
 
   /* réglages : tuiles bulles, texte tenu */
@@ -555,38 +561,77 @@
   }
   .crosser.go{opacity:1}
 
-  /* avion : traverse de gauche à droite, léger piqué */
-  .plane{font-size:26px;top:24%;left:-70px;
+  /* ---------- AVIONS : trois trajectoires differentes ---------- */
+  .plane{font-size:26px;left:-80px;
     filter:drop-shadow(0 3px 6px rgba(60,40,52,.35));}
-  .plane.go{animation:flyAcross 9s linear forwards}
-  @keyframes flyAcross{
-    0%  {transform:translate(-10vw,10vh) rotate(-6deg);opacity:0}
-    8%  {opacity:1}
-    92% {opacity:1}
-    100%{transform:translate(112vw,-6vh) rotate(-4deg);opacity:0}
+  .plane.p1{top:18%}
+  .plane.p2{top:34%;font-size:20px}
+  .plane.p3{top:26%;font-size:23px}
+
+  /* 1. de gauche a droite, legere montee */
+  .plane.p1.go{animation:fly1 9s linear forwards}
+  @keyframes fly1{
+    0%  {transform:translate(-10vw,8vh) rotate(-6deg);opacity:0}
+    8%  {opacity:1} 92%{opacity:1}
+    100%{transform:translate(114vw,-5vh) rotate(-4deg);opacity:0}
+  }
+  /* 2. de droite a gauche, plus bas, legerement descendant */
+  .plane.p2.go{animation:fly2 11s linear forwards}
+  @keyframes fly2{
+    0%  {transform:translate(112vw,-2vh) rotate(180deg) scaleX(-1);opacity:0}
+    8%  {opacity:1} 92%{opacity:1}
+    100%{transform:translate(-12vw,10vh) rotate(180deg) scaleX(-1);opacity:0}
+  }
+  /* 3. en diagonale montante, du bas-gauche vers le haut-droite */
+  .plane.p3.go{animation:fly3 13s linear forwards}
+  @keyframes fly3{
+    0%  {transform:translate(-8vw,34vh) rotate(-22deg);opacity:0}
+    8%  {opacity:1} 92%{opacity:1}
+    100%{transform:translate(108vw,-16vh) rotate(-18deg);opacity:0}
   }
 
-  /* étoile filante : descend en diagonale, avec sa traînée */
-  .shooting{top:10%;left:-60px;}
+  /* ---------- ÉTOILES FILANTES : traînée horizontale, deux sens ---------- */
+  .shooting{height:3px;}
   .shooting .head{
-    display:block;width:7px;height:7px;border-radius:50%;
-    background:radial-gradient(circle,#fff,rgba(255,255,255,.6) 45%,transparent 72%);
-    box-shadow:0 0 12px 4px rgba(255,255,255,.75);
+    position:absolute;top:-2px;width:8px;height:8px;border-radius:50%;
+    background:radial-gradient(circle,#fff,rgba(255,255,255,.65) 45%,transparent 74%);
+    box-shadow:0 0 14px 5px rgba(255,255,255,.72);
   }
   .shooting .tail{
-    position:absolute;right:4px;top:3px;width:110px;height:2px;
-    border-radius:2px;
-    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.85));
-    transform-origin:right center;
-    transform:rotate(-18deg);
+    position:absolute;top:0;height:3px;border-radius:3px;
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.9));
   }
-  .shooting.go{animation:shoot 2.6s ease-in forwards}
-  @keyframes shoot{
+
+  /* A. de gauche a droite, quasi horizontale */
+  .shooting.s1{top:22%;left:-160px}
+  .shooting.s1 .head{right:0}
+  .shooting.s1 .tail{right:6px;width:150px;
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.9))}
+  .shooting.s1.go{animation:streak1 2.8s linear forwards}
+  @keyframes streak1{
     0%  {transform:translate(0,0);opacity:0}
-    10% {opacity:1}
-    75% {opacity:1}
-    100%{transform:translate(118vw,64vh);opacity:0}
+    10% {opacity:1} 72%{opacity:1}
+    100%{transform:translate(126vw,0);opacity:0}
   }
+
+  /* B. de droite a gauche, un peu plus bas : quinconce */
+  .shooting.s2{top:52%;right:-160px}
+  .shooting.s2 .head{left:0}
+  .shooting.s2 .tail{left:6px;width:150px;
+    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.9))}
+  .shooting.s2.go{animation:streak2 2.8s linear forwards}
+  @keyframes streak2{
+    0%  {transform:translate(0,0);opacity:0}
+    10% {opacity:1} 72%{opacity:1}
+    100%{transform:translate(-126vw,0);opacity:0}
+  }
+
+  /* C. une troisieme, plus haute, plus petite, sens inverse */
+  .shooting.s3{top:70%;right:-160px;transform:scale(.7)}
+  .shooting.s3 .head{left:0}
+  .shooting.s3 .tail{left:6px;width:110px;
+    background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.8))}
+  .shooting.s3.go{animation:streak2 3.4s linear forwards}
 
   @media (prefers-reduced-motion:reduce){
     .plane.go,.shooting.go{animation:none;opacity:0}
@@ -628,8 +673,17 @@
     <div class="stars" id="stars"></div>
     <div class="sun-cele" id="sunCele"></div>
     <div class="moon" id="moon"></div>
-    <span class="crosser plane" id="plane" aria-hidden="true">✈️</span>
-    <span class="crosser shooting" id="shooting" aria-hidden="true">
+    <span class="crosser plane p1" id="plane1" aria-hidden="true">✈️</span>
+    <span class="crosser plane p2" id="plane2" aria-hidden="true">✈️</span>
+    <span class="crosser plane p3" id="plane3" aria-hidden="true">✈️</span>
+
+    <span class="crosser shooting s1" id="shoot1" aria-hidden="true">
+      <span class="tail"></span><span class="head"></span>
+    </span>
+    <span class="crosser shooting s2" id="shoot2" aria-hidden="true">
+      <span class="tail"></span><span class="head"></span>
+    </span>
+    <span class="crosser shooting s3" id="shoot3" aria-hidden="true">
       <span class="tail"></span><span class="head"></span>
     </span>
   </div>
@@ -719,15 +773,19 @@
               <input id="titre" type="text" maxlength="80" autocomplete="off"
                      placeholder="Titre de l'événement" aria-label="Titre de l'événement">
             </div>
-            <div class="field">
-              <input id="date" type="date" aria-label="Date de l'événement">
+            <div class="mini-fields">
+              <div class="field">
+                <input id="date" type="date" aria-label="Date de l'événement">
+              </div>
+              <div class="field">
+                <input id="heure" type="time" aria-label="Heure de l'événement">
+              </div>
             </div>
-            <div class="field">
-              <input id="heure" type="time" aria-label="Heure de l'événement">
+            <div class="agenda-head" style="margin-top:6px">
+              <button class="fab-plus fab-save" id="ajouter" type="button" aria-label="Ajouter l'événement">
+                <span aria-hidden="true">+</span>
+              </button>
             </div>
-            <button class="btn-carve" id="ajouter" type="button">
-              <span class="plus" aria-hidden="true">+</span><span>Ajouter</span>
-            </button>
           </div>
         </div>
       </div>
@@ -1245,29 +1303,37 @@
   }
   setInterval(function(){ if(currentTheme==="auto") applySky(); },60000);
 
-  /* ---------- traversées : avion le jour, étoile filante la nuit ---------- */
-  var $plane=document.getElementById("plane");
-  var $shooting=document.getElementById("shooting");
+  /* ---------- traversées : avions le jour, étoiles filantes la nuit ---------- */
+  var PLANES=["plane1","plane2","plane3"].map(function(id){ return document.getElementById(id); });
+  var SHOOTS=["shoot1","shoot2","shoot3"].map(function(id){ return document.getElementById(id); });
   var crosserTimer=null;
 
-  function launchCrosser(){
-    /* on ne traverse que sur l'Accueil */
-    if(currentView!=="accueil") return;
-    var t=effectiveTheme();
-    var el, cls;
-    if(t==="jour" || t==="coucher" || t==="aube"){ el=$plane; }
-    else { el=$shooting; }
+  function restart(el){
     if(!el) return;
     el.classList.remove("go");
-    void el.offsetWidth;          /* relance l'animation proprement */
+    void el.offsetWidth;          /* force le redémarrage de l'animation */
     el.classList.add("go");
+  }
+
+  function launchCrosser(){
+    if(currentView!=="accueil") return;   /* seulement sur l'Accueil */
+    var t=effectiveTheme();
+    var isDay=(t==="jour" || t==="coucher" || t==="aube");
+    if(isDay){
+      restart(PLANES[0]);                     /* gauche -> droite */
+      if(PLANES[1]) setTimeout(function(){ restart(PLANES[1]); }, 2200);   /* droite -> gauche */
+      if(PLANES[2]) setTimeout(function(){ restart(PLANES[2]); }, 5200);   /* diagonale montante */
+    }else{
+      restart(SHOOTS[0]);                     /* traînée vers la droite */
+      if(SHOOTS[1]) setTimeout(function(){ restart(SHOOTS[1]); }, 1400);   /* en quinconce, vers la gauche */
+      if(SHOOTS[2]) setTimeout(function(){ restart(SHOOTS[2]); }, 3600);
+    }
   }
 
   function scheduleCrossers(){
     if(crosserTimer) clearInterval(crosserTimer);
-    /* une traversée toutes les 15 s, la première après 3 s */
     setTimeout(launchCrosser,3000);
-    crosserTimer=setInterval(launchCrosser,15000);
+    crosserTimer=setInterval(launchCrosser,15000);   /* un passage toutes les 15 s */
   }
 
 
