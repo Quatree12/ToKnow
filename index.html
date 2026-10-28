@@ -460,17 +460,17 @@
     z-index:3;pointer-events:none;transform:translate3d(0,0,0);
     transition:transform .52s cubic-bezier(.34,1.42,.5,1);
     filter:url(#goo);
-    opacity:.72;
+    opacity:.40;
     mix-blend-mode:normal;
   }
   .blob i{
     position:absolute;display:block;border-radius:50%;
-    /* verre clair : teinte du thème très diluée, on voit la barre au travers */
+    /* verre quasi invisible : simple voile teinté, la barre se lit au travers */
     background:radial-gradient(circle at 34% 28%,
-      rgba(255,255,255,.30) 0%,
-      var(--accent) 50%,
+      rgba(255,255,255,.14) 0%,
+      var(--accent) 55%,
       var(--accent) 100%);
-    opacity:.26;
+    opacity:.10;
     transition:background .7s ease;
   }
   .blob .b1{width:64px;height:64px;left:0;top:0}
@@ -479,30 +479,33 @@
   .blob .b3{width:34px;height:34px;left:15px;top:-6px;animation:drip2 4.1s ease-in-out infinite}
   @keyframes drip2{0%,100%{transform:translateY(0) scale(.9);opacity:.6}50%{transform:translateY(-5px) scale(1);opacity:.9}}
 
-  /* reflet + liseré du verre, dessinés par-dessus la goutte */
+  /* verre clair : pas de fond laiteux, juste un liseré et un reflet discret.
+     Ce qui donne la lecture « verre », c'est le bord — pas la masse. */
   .blob-glass{
     position:absolute;top:0;left:0;height:64px;width:64px;
     z-index:4;pointer-events:none;border-radius:50%;
-    background:
-      radial-gradient(circle at 32% 22%, rgba(255,255,255,.70), rgba(255,255,255,.06) 45%, transparent 64%),
-      linear-gradient(150deg, rgba(255,255,255,.22), rgba(255,255,255,0) 58%);
+    background:transparent;
+    border:1px solid rgba(255,255,255,.55);
     box-shadow:
-      inset 0 1px 1px rgba(255,255,255,.95),
-      inset 0 -2px 6px rgba(255,255,255,.22),
-      0 2px 8px rgba(60,40,52,.12);
-    backdrop-filter:blur(3px) saturate(120%);
-    -webkit-backdrop-filter:blur(3px) saturate(120%);
+      inset 0 1px 1px rgba(255,255,255,.70),
+      inset 0 -2px 8px rgba(255,255,255,.30),
+      0 1px 4px rgba(60,40,52,.08);
+    backdrop-filter:blur(1.5px) saturate(115%);
+    -webkit-backdrop-filter:blur(1.5px) saturate(115%);
     transform:translate3d(0,0,0);
     transition:transform .52s cubic-bezier(.34,1.42,.5,1);
   }
-
-  .blob-glow{
-    position:absolute;top:-4px;left:0;width:96px;height:96px;
-    z-index:2;pointer-events:none;border-radius:50%;
-    background:radial-gradient(circle, var(--accent) 0%, transparent 68%);
-    filter:blur(11px);opacity:.32;
-    transition:transform .52s cubic-bezier(.34,1.42,.5,1), background .7s ease;
+  /* petit reflet spéculaire isolé, en haut à gauche */
+  .blob-glass::after{
+    content:"";position:absolute;
+    left:13px;top:9px;width:22px;height:14px;
+    border-radius:50%;
+    background:radial-gradient(ellipse at 40% 40%, rgba(255,255,255,.85), rgba(255,255,255,0) 70%);
+    filter:blur(1px);
   }
+
+  /* halo coupé : on ne veut plus de tache rose derrière la barre */
+  .blob-glow{display:none}
 
   nav{
     position:relative;z-index:1;
