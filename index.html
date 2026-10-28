@@ -133,6 +133,225 @@
   }
 
   /* ================================================================
+     AMBIANCE « PAPIER » — bulles cuivre & chrome (image 1)
+     Typographie 3D métallique : cuivre rose et acier poli,
+     surfaces lisses, reflets de studio. Aucune animation.
+     ================================================================ */
+  body.amb-paper{
+    --copper-1:#d9a07a;
+    --copper-2:#b8734a;
+    --copper-3:#7d4526;
+    --steel-1:#e8e9ea;
+    --steel-2:#b9bdc2;
+    --steel-3:#82878e;
+    --amb-ink:#3a2f28;        /* texte sur métal clair */
+    --amb-ink-soft:#6b584a;
+  }
+  body.amb-paper .bg-marble,
+  body.amb-paper .bg-paper{
+    /* ciel blanc, identique sur tous les écrans */
+    background:#ffffff !important;
+    background-image:none !important;
+  }
+
+  /* bulles cuivre / chrome */
+  body.amb-paper .bubble,
+  body.amb-paper .carve{
+    background-color:#c98a5e !important;
+    background-image:
+      /* reflet spéculaire large */
+      radial-gradient(ellipse 58% 34% at 30% 6%, rgba(255,255,255,.95), transparent 58%),
+      radial-gradient(ellipse 32% 16% at 78% 12%, rgba(255,255,255,.55), transparent 62%),
+      /* rebond clair en bas */
+      radial-gradient(ellipse 72% 26% at 52% 104%, rgba(255,228,205,.75), transparent 66%),
+      /* corps cuivré */
+      linear-gradient(158deg, var(--copper-1) 0%, var(--copper-2) 46%, var(--copper-3) 100%) !important;
+    background-blend-mode:screen,screen,screen,normal !important;
+    box-shadow:
+      inset 2px 2px 0 rgba(255,255,255,.75),
+      inset -3px -4px 12px rgba(90,40,10,.55),
+      inset -2px 0 8px rgba(120,60,20,.30),
+      0 14px 26px rgba(120,80,50,.28),
+      0 3px 0 #4a2410 !important;
+  }
+  body.amb-paper .bubble::after,
+  body.amb-paper .carve::after{
+    /* fine rayure de métal poli plutôt que grain de pierre */
+    background-image:
+      repeating-linear-gradient(96deg, rgba(255,255,255,.10) 0 1px, transparent 1px 7px) !important;
+    mix-blend-mode:screen !important;
+    opacity:.5 !important;
+  }
+  /* textes sur métal clair */
+  body.amb-paper .bubble .t,
+  body.amb-paper .bubble .val,
+  body.amb-paper .carve .t,
+  body.amb-paper .event .when,
+  body.amb-paper .note-card .txt{color:var(--amb-ink) !important}
+  body.amb-paper .bubble .s,
+  body.amb-paper .bubble .sub,
+  body.amb-paper .carve .s,
+  body.amb-paper .event .note{color:var(--amb-ink-soft) !important}
+  body.amb-paper .panel-label,
+  body.amb-paper .event .initial,
+  body.amb-paper .note-card .meta,
+  body.amb-paper .b-date .dw,
+  body.amb-paper .b-date .dm,
+  body.amb-paper .weather .place,
+  body.amb-paper .b-mini .lbl,
+  body.amb-paper .b-day .d,
+  body.amb-paper .count-line{color:#8a4a20 !important}
+  body.amb-paper h1{
+    background-image:linear-gradient(180deg,#f2d6bd,#a35c2c) !important;
+    -webkit-background-clip:text;background-clip:text;
+  }
+  body.amb-paper .subtitle{color:#7d6a5c !important}
+
+  /* champs : cuivre creusé */
+  body.amb-paper .field{
+    background-color:#6b3a1e !important;
+    background-image:
+      linear-gradient(178deg, rgba(255,220,190,.30), rgba(60,25,5,.55)) !important;
+    background-blend-mode:normal !important;
+    box-shadow:
+      inset 0 3px 8px rgba(40,15,0,.75),
+      inset 0 -1px 0 rgba(255,220,190,.45) !important;
+  }
+  body.amb-paper .field input,
+  body.amb-paper .field textarea{color:#ffeede !important}
+  body.amb-paper .field input::placeholder{color:#d9a97f !important}
+
+  /* ================================================================
+     AMBIANCE « PIERRE BRUTE » — bulles émeraude coulée (image 2)
+     Surface lisse et ruisselante, plis, reflets miroir.
+     Ciel granit foncé. Aucune animation.
+     ================================================================ */
+  body.amb-stone{
+    --em-1:#1f6b45;
+    --em-2:#0e4429;
+    --em-3:#052416;
+    --amb-ink:#eaf7f0;
+    --amb-ink-soft:#a9c9b7;
+  }
+  body.amb-stone .bg-marble,
+  body.amb-stone .bg-paper{
+    /* granit foncé moucheté */
+    background-color:#2b2b30 !important;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='gr'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='6' seed='41'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23gr)' opacity='0.42'/></svg>"),
+      radial-gradient(ellipse 70% 45% at 40% 20%, rgba(255,255,255,.07), transparent 68%),
+      linear-gradient(168deg,#3a3a40 0%,#2b2b30 44%,#1c1c21 100%) !important;
+    background-blend-mode:overlay,normal,normal !important;
+  }
+
+  body.amb-stone .bubble,
+  body.amb-stone .carve{
+    background-color:#0e4429 !important;
+    background-image:
+      /* plis lumineux : deux reflets étirés, comme une matière coulée */
+      radial-gradient(ellipse 46% 12% at 34% 22%, rgba(255,255,255,.85), transparent 66%),
+      radial-gradient(ellipse 30% 9% at 68% 62%, rgba(210,255,230,.55), transparent 68%),
+      radial-gradient(ellipse 58% 20% at 46% 96%, rgba(120,220,170,.40), transparent 70%),
+      linear-gradient(158deg, var(--em-1) 0%, var(--em-2) 48%, var(--em-3) 100%) !important;
+    background-blend-mode:screen,screen,screen,normal !important;
+    box-shadow:
+      inset 3px 3px 1px rgba(220,255,235,.55),
+      inset -4px -6px 16px rgba(0,20,8,.80),
+      inset -2px 0 10px rgba(0,40,20,.45),
+      0 16px 30px rgba(0,20,10,.55),
+      0 3px 0 #02120a !important;
+  }
+  body.amb-stone .bubble::after,
+  body.amb-stone .carve::after{
+    /* veinures de la matière coulée */
+    background-image:
+      repeating-linear-gradient(118deg, rgba(255,255,255,.07) 0 2px, transparent 2px 15px) !important;
+    mix-blend-mode:screen !important;
+    opacity:.45 !important;
+  }
+  body.amb-stone .bubble .t,
+  body.amb-stone .bubble .val,
+  body.amb-stone .carve .t,
+  body.amb-stone .event .when,
+  body.amb-stone .note-card .txt{color:var(--amb-ink) !important}
+  body.amb-stone .bubble .s,
+  body.amb-stone .bubble .sub,
+  body.amb-stone .carve .s,
+  body.amb-stone .event .note{color:var(--amb-ink-soft) !important}
+  body.amb-stone h1{
+    background-image:linear-gradient(180deg,#d6f5e4,#4fae7c) !important;
+    -webkit-background-clip:text;background-clip:text;
+  }
+  body.amb-stone .subtitle{color:#9fc4b0 !important}
+  body.amb-stone .empty{color:#8fb3a2 !important}
+
+  body.amb-stone .field{
+    background-color:#04200f !important;
+    background-image:linear-gradient(178deg, rgba(160,255,210,.18), rgba(0,15,6,.65)) !important;
+    background-blend-mode:normal !important;
+    box-shadow:
+      inset 0 3px 9px rgba(0,0,0,.85),
+      inset 0 -1px 0 rgba(170,255,215,.30) !important;
+  }
+  body.amb-stone .field input,
+  body.amb-stone .field textarea{color:#e6fff1 !important}
+  body.amb-stone .field input::placeholder{color:#6fae8e !important}
+
+  /* ================================================================
+     TAB BAR DES AMBIANCES 1 & 2 : soulignement métallique
+     (la bille de verre disparaît)
+     ================================================================ */
+  body.amb-paper .blob,
+  body.amb-stone .blob{display:none !important}
+
+  body.amb-paper nav,
+  body.amb-stone nav{
+    border-radius:26px !important;
+    padding:10px 8px !important;
+  }
+  body.amb-paper nav{
+    background:#f6efe7 !important;
+    box-shadow:inset 0 -1px 0 rgba(180,120,70,.25), 0 10px 22px rgba(120,80,50,.20) !important;
+  }
+  body.amb-stone nav{
+    background:#14171a !important;
+    box-shadow:inset 0 -1px 0 rgba(80,200,140,.25), 0 10px 22px rgba(0,0,0,.45) !important;
+  }
+
+  body.amb-paper .tab,
+  body.amb-stone .tab{
+    position:relative;
+    transition:color .25s ease;
+  }
+  /* le soulignement : une barre fine sous l'onglet actif */
+  body.amb-paper .tab::after,
+  body.amb-stone .tab::after{
+    content:"";
+    position:absolute;left:50%;bottom:2px;
+    width:0;height:3px;border-radius:2px;
+    transform:translateX(-50%);
+    transition:width .28s ease;
+  }
+  body.amb-paper .tab::after{
+    background:linear-gradient(90deg,#e0b189,#a35c2c);
+    box-shadow:0 1px 4px rgba(160,90,40,.55);
+  }
+  body.amb-stone .tab::after{
+    background:linear-gradient(90deg,#6fe0a6,#1f8f5c);
+    box-shadow:0 1px 5px rgba(60,200,140,.55);
+  }
+  body.amb-paper .tab.active::after,
+  body.amb-stone .tab.active::after{width:64%}
+
+  body.amb-paper .tab{color:#8a7565}
+  body.amb-paper .tab.active{color:#8a4a20}
+  body.amb-paper .tab.active .label{color:#8a4a20;text-shadow:none}
+
+  body.amb-stone .tab{color:#7f9188}
+  body.amb-stone .tab.active{color:#5fd99b}
+  body.amb-stone .tab.active .label{color:#5fd99b;text-shadow:0 0 8px rgba(90,220,150,.45)}
+
+  /* ================================================================
      MISE EN PAGE
      ================================================================ */
   .app{
@@ -1605,6 +1824,7 @@
 
   function placeBlob(btn,animate){
     if(!btn) return;
+    if(!animationsAllowed()) return;   /* pas de bille hors ambiance Marbre */
     var nav=btn.parentElement;
     var navBox=nav.getBoundingClientRect();
     var box=btn.getBoundingClientRect();
@@ -1649,7 +1869,9 @@
     document.documentElement.style.setProperty("--accent",th.accent);
 
     var isAuto=(currentTheme==="auto");
-    var onHome=true;   /* le fond du ciel s'applique a TOUTES les pages */
+    /* le ciel n'apparait que dans l'ambiance Marbre : les deux autres
+       ambiances ont leur propre fond, fixe */
+    var onHome=animationsAllowed();
 
     /* le badge de type de ciel est supprime : plus rien a mettre a jour ici */
 
@@ -1762,6 +1984,8 @@
   }
 
   function launchCrosser(){
+    /* Papier et Pierre brute : aucun décor, on nettoie et on sort */
+    if(!animationsAllowed()){ resetAll(); return; }
     var t=effectiveTheme();
     resetAll();
 
@@ -1863,12 +2087,16 @@
   var appearance=loadStr("toknow.appearance.v1","marble");
 
   function applyAppearance(){
-    var bg=SCREENS[currentView].bg;
-    if(bg==="bg-paper" && appearance!=="paper"){
-      $app.style.setProperty("--bg-override", appearance==="stone" ? "#3a3a3e" : "#f4f1ec");
-    } else {
-      $app.style.removeProperty("--bg-override");
-    }
+    document.body.classList.remove("amb-paper","amb-stone");
+    if(appearance==="paper") document.body.classList.add("amb-paper");
+    if(appearance==="stone") document.body.classList.add("amb-stone");
+    /* les ambiances Papier et Pierre brute n'ont AUCUNE animation */
+    applySky();
+  }
+
+  /* vrai si l'ambiance courante autorise les décors animés */
+  function animationsAllowed(){
+    return appearance==="marble";
   }
 
   /* ---------- EXPORT : .json et .txt ---------- */
@@ -2186,6 +2414,7 @@
 
   $date.value=isoToday(); $heure.value=nowHM();
   paintStacks();
+  applyAppearance();
   renderEvents(); renderNotes(); renderHome(); renderSkyModes();
 
   var start="accueil";
