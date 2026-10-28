@@ -676,9 +676,9 @@
   .plane.red  .body{filter:hue-rotate(300deg) saturate(1.8)}
   .plane.green .body{filter:hue-rotate(60deg) saturate(1.6)}
 
-  .plane.p1{top:58%;left:-90px}
-  .plane.p2{top:72%;left:-90px;font-size:19px}
-  .plane.p3{top:50%;left:-90px;font-size:21px}
+  .plane.p1{top:26%;left:-90px}
+  .plane.p2{top:56%;left:-90px;font-size:19px}
+  .plane.p3{top:78%;left:-90px;font-size:21px}
 
   .plane.p1.go{animation:fly1 6.5s linear forwards}
   @keyframes fly1{
@@ -703,14 +703,19 @@
   .ladybug{
     position:fixed;z-index:1;pointer-events:none;font-size:16px;line-height:1;opacity:0;
   }
-  .ladybug.go{animation:crawl 11s ease-in-out forwards}
+  /* une coccinelle sur trois démarre en haut, au milieu ou en bas :
+     elles balaient toute la hauteur de l'écran */
+  .ladybug.lv1{top:18%}
+  .ladybug.lv2{top:52%}
+  .ladybug.lv3{top:80%}
+  .ladybug.go{animation:crawl 13s ease-in-out forwards}
   @keyframes crawl{
-    0%  {transform:translate(0,0) rotate(-10deg);opacity:0}
-    10% {opacity:1}
-    35% {transform:translate(28vw,10vh) rotate(12deg)}
-    65% {transform:translate(58vw,-6vh) rotate(-8deg)}
-    90% {opacity:1}
-    100%{transform:translate(92vw,4vh) rotate(10deg);opacity:0}
+    0%  {transform:translate(-8vw,0) rotate(-10deg);opacity:0}
+    8%  {opacity:1}
+    28% {transform:translate(26vw,-14vh) rotate(12deg)}
+    55% {transform:translate(54vw,8vh) rotate(-8deg)}
+    80% {transform:translate(78vw,-6vh) rotate(10deg);opacity:1}
+    100%{transform:translate(104vw,4vh) rotate(6deg);opacity:0}
   }
 
   /* --- hélicoptères (jour) --- */
@@ -718,26 +723,32 @@
     position:fixed;z-index:1;pointer-events:none;font-size:20px;line-height:1;opacity:0;
     filter:hue-rotate(40deg) saturate(1.3);
   }
-  .heli.h1{top:64%}
-  .heli.h2{top:78%;font-size:17px;filter:hue-rotate(210deg) saturate(1.4)}
-  .heli.go{animation:hoover 8s linear forwards}
+  /* ils partent du bas de l'écran et montent en diagonale */
+  .heli.h1{top:88%}
+  .heli.h2{top:80%;font-size:17px;filter:hue-rotate(210deg) saturate(1.4)}
+  .heli.h3{top:92%;font-size:18px;filter:hue-rotate(120deg) saturate(1.3)}
+  .heli.h4{top:84%;font-size:15px;filter:hue-rotate(320deg) saturate(1.4)}
+  .heli.go{animation:hoover 9s ease-out forwards}
   @keyframes hoover{
-    0%  {transform:translate(-12vw,2vh) rotate(-3deg);opacity:0}
-    8%  {opacity:1} 92%{opacity:1}
-    100%{transform:translate(116vw,-2vh) rotate(-2deg);opacity:0}
+    0%  {transform:translate(-14vw,6vh) rotate(-6deg);opacity:0}
+    8%  {opacity:1} 90%{opacity:1}
+    100%{transform:translate(112vw,-52vh) rotate(-8deg);opacity:0}
   }
 
   /* --- hiboux (coucher) --- */
   .owl{
     position:fixed;z-index:1;pointer-events:none;font-size:19px;line-height:1;opacity:0;
   }
-  .owl.go{animation:glide 10s ease-in-out forwards}
+  .owl.ow1{top:30%}
+  .owl.ow2{top:62%}
+  .owl.ow3{top:84%;font-size:16px}
+  .owl.go{animation:glide 12s ease-in-out forwards}
   @keyframes glide{
-    0%  {transform:translate(0,0) rotate(-6deg);opacity:0}
+    0%  {transform:translate(-10vw,0) rotate(-6deg);opacity:0}
     10% {opacity:1}
-    50% {transform:translate(52vw,-9vh) rotate(5deg)}
-    90% {opacity:1}
-    100%{transform:translate(104vw,-3vh) rotate(-4deg);opacity:0}
+    40% {transform:translate(38vw,-16vh) rotate(5deg)}
+    72% {transform:translate(72vw,10vh) rotate(-5deg);opacity:1}
+    100%{transform:translate(106vw,-6vh) rotate(-4deg);opacity:0}
   }
 
   /* --- satellite et soucoupe (nuit) --- */
@@ -745,11 +756,16 @@
     position:fixed;z-index:1;pointer-events:none;font-size:18px;line-height:1;opacity:0;
     filter:drop-shadow(0 0 6px rgba(200,220,255,.6));
   }
-  .sat.go{animation:orbit 16s linear forwards}
+  /* le satellite reste haut, la soucoupe navigue plus bas en zigzag */
+  .sat.st1{top:12%}
+  .sat.st2{top:76%;font-size:20px}
+  .sat.go{animation:orbit 17s linear forwards}
   @keyframes orbit{
-    0%  {transform:translate(-12vw,10vh) rotate(8deg);opacity:0}
-    6%  {opacity:.95} 94%{opacity:.95}
-    100%{transform:translate(116vw,-14vh) rotate(6deg);opacity:0}
+    0%  {transform:translate(-12vw,8vh) rotate(8deg);opacity:0}
+    8%  {opacity:.95}
+    30% {transform:translate(30vw,20vh) rotate(4deg)}
+    65% {transform:translate(70vw,-6vh) rotate(10deg);opacity:.95}
+    100%{transform:translate(116vw,14vh) rotate(6deg);opacity:0}
   }
 
   /* --- chauves-souris (coucher) --- */
@@ -911,18 +927,21 @@
     <span class="crosser plane p2 red" id="plane2" aria-hidden="true"><span class="body">✈️</span></span>
     <span class="crosser plane p3 green" id="plane3" aria-hidden="true"><span class="body">✈️</span></span>
 
-    <span class="ladybug" id="lady1" aria-hidden="true">🐞</span>
-    <span class="ladybug" id="lady2" aria-hidden="true">🐞</span>
-    <span class="ladybug" id="lady3" aria-hidden="true">🐞</span>
+    <span class="ladybug lv1" id="lady1" aria-hidden="true">🐞</span>
+    <span class="ladybug lv2" id="lady2" aria-hidden="true">🐞</span>
+    <span class="ladybug lv3" id="lady3" aria-hidden="true">🐞</span>
 
     <span class="heli h1" id="heli1" aria-hidden="true">🚁</span>
     <span class="heli h2" id="heli2" aria-hidden="true">🚁</span>
+    <span class="heli h3" id="heli3" aria-hidden="true">🚁</span>
+    <span class="heli h4" id="heli4" aria-hidden="true">🚁</span>
 
-    <span class="owl" id="owl1" aria-hidden="true">🦉</span>
-    <span class="owl" id="owl2" aria-hidden="true">🦉</span>
+    <span class="owl ow1" id="owl1" aria-hidden="true">🦉</span>
+    <span class="owl ow2" id="owl2" aria-hidden="true">🦉</span>
+    <span class="owl ow3" id="owl3" aria-hidden="true">🦉</span>
 
-    <span class="sat" id="sat1" aria-hidden="true">🛰️</span>
-    <span class="sat" id="sat2" aria-hidden="true">🛸</span>
+    <span class="sat st1" id="sat1" aria-hidden="true">🛰️</span>
+    <span class="sat st2" id="sat2" aria-hidden="true">🛸</span>
 
     <span class="bat c1" id="bat1" aria-hidden="true">🦇</span>
     <span class="bat c2" id="bat2" aria-hidden="true">🦇</span>
@@ -1026,8 +1045,7 @@
         </div>
       </div>
 
-      <!-- une bulle par jour -->
-      <div class="wx-days" id="wxWeek"></div>
+      <!-- les prévisions de la semaine ont été retirées -->
 
       <div class="wx-meta" id="wxMeta">—</div>
 
@@ -1462,9 +1480,10 @@
       return;
     }
 
-    /* une bulle par jour */
+    /* les bulles de la semaine ne sont plus affichées */
+    if(!$wxWeek) return;
     $wxWeek.innerHTML="";
-    var n=Math.min(d.time.length,5);
+    var n=0;
     for(var i=0;i<n;i++){
       var p=d.time[i].split("-");
       var dd=new Date(+p[0],+p[1]-1,+p[2]);
@@ -1666,8 +1685,8 @@
   var BUTTERFLIES = ids("bf",5);
   var TWINKLES = ids("tw",8);
   var LADYBUGS   = ids("lady",3);
-  var HELIS      = ids("heli",2);
-  var OWLS       = ids("owl",2);
+  var HELIS      = ids("heli",4);
+  var OWLS       = ids("owl",3);
   var SATS       = ids("sat",2);
   var crosserTimer=null;
 
@@ -1729,20 +1748,23 @@
       if(t==="jour"){
         /* trois avions + deux hélicoptères */
         restart(PLANES[0]);
-        setTimeout(function(){ restart(PLANES[1]); }, 1300);
-        setTimeout(function(){ restart(HELIS[0]); }, 2600);
-        setTimeout(function(){ restart(PLANES[2]); }, 4000);
-        setTimeout(function(){ restart(HELIS[1]); }, 5400);
+        setTimeout(function(){ restart(HELIS[0]); }, 900);
+        setTimeout(function(){ restart(PLANES[1]); }, 2200);
+        setTimeout(function(){ restart(HELIS[1]); }, 3400);
+        setTimeout(function(){ restart(PLANES[2]); }, 4800);
+        setTimeout(function(){ restart(HELIS[2]); }, 6000);
+        setTimeout(function(){ restart(HELIS[3]); }, 7200);
         return;
       }
 
       if(t==="coucher"){
         /* deux hiboux + trois chauves-souris */
         restart(BATS[0]);
-        setTimeout(function(){ restart(OWLS[0]); }, 1500);
-        setTimeout(function(){ restart(BATS[1]); }, 3000);
-        setTimeout(function(){ restart(OWLS[1]); }, 4600);
-        setTimeout(function(){ restart(BATS[2]); }, 6000);
+        setTimeout(function(){ restart(OWLS[0]); }, 1200);
+        setTimeout(function(){ restart(BATS[1]); }, 2400);
+        setTimeout(function(){ restart(OWLS[1]); }, 3600);
+        setTimeout(function(){ restart(BATS[2]); }, 4800);
+        setTimeout(function(){ restart(OWLS[2]); }, 6000);
         return;
       }
 
@@ -1767,8 +1789,9 @@
       setTimeout(function(){ restart(SATS[0]); }, 1800);
       setTimeout(function(){ restart(SHOOTS[2]); }, 2900);
       setTimeout(function(){ restart(SHOOTS[3]); }, 3900);
-      setTimeout(function(){ restart(SATS[1]); }, 5200);
-      setTimeout(function(){ restart(SHOOTS[4]); }, 6600);
+      setTimeout(function(){ restart(SATS[1]); }, 3200);
+      setTimeout(function(){ restart(SHOOTS[4]); }, 4600);
+      setTimeout(function(){ restart(SHOOTS[1]); }, 7000);
     }catch(e){ /* un décor qui échoue ne doit pas casser l'app */ }
   }
 
