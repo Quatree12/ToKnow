@@ -894,7 +894,7 @@
     100%{transform:translate(124vw,-18vh);opacity:0}
   }
   /* D. dans le BAS, sens inverse */
-  .shooting.s4{top:86%;right:-170px}
+  .shooting.s4{top:86%;right:-170px;display:none}
   .shooting.s4 .tail{left:6px;width:110px;transform:rotate(14deg)}
   .shooting.s4.go{animation:dia4 4s linear forwards}
   @keyframes dia4{
@@ -903,7 +903,7 @@
     100%{transform:translate(-124vw,-24vh);opacity:0}
   }
   /* E. une cinquième, depuis le coin haut-droit, très longue */
-  .shooting.s5{top:34%;right:-170px}
+  .shooting.s5{top:34%;right:-170px;display:none}
   .shooting.s5 .tail{left:6px;width:150px;
     background:linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,.9));
     transform:rotate(-26deg);transform-origin:left center}
@@ -1768,14 +1768,15 @@
     try{
       if(t==="aube"){
         scatterStars(TWINKLES,4);          /* quelques étoiles qui pâlissent */
-        BUTTERFLIES.forEach(function(b,i){
+        /* on n'en lance que trois : moins de mouvement, plus lisible */
+        BUTTERFLIES.slice(0,3).forEach(function(b,i){
           if(!b) return;
           b.style.top=(26+Math.random()*50)+"vh";
-          setTimeout(function(){ restart(b); }, 300+i*760);
+          setTimeout(function(){ restart(b); }, 500+i*1800);
         });
-        LADYBUGS.forEach(function(l,i){
+        LADYBUGS.slice(0,2).forEach(function(l,i){
           if(!l) return;
-          setTimeout(function(){ restart(l); }, 1800+i*1600);
+          setTimeout(function(){ restart(l); }, 2600+i*2400);
         });
         return;
       }
