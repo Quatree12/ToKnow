@@ -305,11 +305,11 @@
     padding:14px;
   }
   /* heures en rose (comme le « MER. »), minutes en blanc : la difference se lit */
-  .b-time .hh{font-size:52px;font-weight:900;line-height:.96;color:var(--accent-2);
+  .b-time .hh{font-size:52px;font-weight:900;line-height:.96;color:var(--accent-1);
     text-shadow:0 2px 0 #141416,0 6px 14px rgba(0,0,0,.7)}
   .b-time .mm{font-size:52px;font-weight:900;line-height:.96;color:#ffffff;
     text-shadow:0 2px 0 #141416,0 6px 14px rgba(0,0,0,.7)}
-  .b-time .ss{font-size:20px;font-weight:800;color:var(--primary);letter-spacing:3px;margin-top:4px;opacity:.85}
+  .b-time .ss{font-size:20px;font-weight:800;color:var(--accent-1);letter-spacing:3px;margin-top:4px;opacity:.75}
   .b-time .hello{font-size:11.5px;font-weight:800;letter-spacing:1px;color:var(--primary);
     text-transform:uppercase;margin-bottom:6px}
 
@@ -400,8 +400,7 @@
     box-shadow:
       inset 1px 1px 0 rgba(255,255,255,.28),
       inset 0 -5px 12px rgba(0,0,0,.65),
-      0 10px 20px rgba(40,34,42,.36),
-      0 3px 0 #0d0d0f;
+      0 8px 16px rgba(40,34,42,.30);
     transition:transform .18s cubic-bezier(.34,1.4,.5,1);
   }
   .fab-plus span{position:relative;z-index:1;text-shadow:0 2px 4px rgba(0,0,0,.7);
@@ -640,8 +639,8 @@
 
   /* --- étoiles qui scintillent (aube + nuit) --- */
   .twinkle{
-    position:fixed;z-index:1;pointer-events:none;width:3px;height:3px;border-radius:50%;
-    background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.8);
+    position:fixed;z-index:1;pointer-events:none;width:4px;height:4px;border-radius:50%;
+    background:#fff;box-shadow:0 0 10px 4px rgba(255,255,255,.95);
     opacity:0;
   }
   .twinkle.go{animation:sparkle 4s ease-in-out infinite}
@@ -698,6 +697,59 @@
     0%  {transform:translate(-8vw,14vh) rotate(-24deg);opacity:0}
     8%  {opacity:1} 92%{opacity:1}
     100%{transform:translate(110vw,-14vh) rotate(-20deg);opacity:0}
+  }
+
+  /* --- coccinelles (aube) --- */
+  .ladybug{
+    position:fixed;z-index:1;pointer-events:none;font-size:16px;line-height:1;opacity:0;
+  }
+  .ladybug.go{animation:crawl 11s ease-in-out forwards}
+  @keyframes crawl{
+    0%  {transform:translate(0,0) rotate(-10deg);opacity:0}
+    10% {opacity:1}
+    35% {transform:translate(28vw,10vh) rotate(12deg)}
+    65% {transform:translate(58vw,-6vh) rotate(-8deg)}
+    90% {opacity:1}
+    100%{transform:translate(92vw,4vh) rotate(10deg);opacity:0}
+  }
+
+  /* --- hélicoptères (jour) --- */
+  .heli{
+    position:fixed;z-index:1;pointer-events:none;font-size:20px;line-height:1;opacity:0;
+    filter:hue-rotate(40deg) saturate(1.3);
+  }
+  .heli.h1{top:64%}
+  .heli.h2{top:78%;font-size:17px;filter:hue-rotate(210deg) saturate(1.4)}
+  .heli.go{animation:hoover 8s linear forwards}
+  @keyframes hoover{
+    0%  {transform:translate(-12vw,2vh) rotate(-3deg);opacity:0}
+    8%  {opacity:1} 92%{opacity:1}
+    100%{transform:translate(116vw,-2vh) rotate(-2deg);opacity:0}
+  }
+
+  /* --- hiboux (coucher) --- */
+  .owl{
+    position:fixed;z-index:1;pointer-events:none;font-size:19px;line-height:1;opacity:0;
+  }
+  .owl.go{animation:glide 10s ease-in-out forwards}
+  @keyframes glide{
+    0%  {transform:translate(0,0) rotate(-6deg);opacity:0}
+    10% {opacity:1}
+    50% {transform:translate(52vw,-9vh) rotate(5deg)}
+    90% {opacity:1}
+    100%{transform:translate(104vw,-3vh) rotate(-4deg);opacity:0}
+  }
+
+  /* --- satellite et soucoupe (nuit) --- */
+  .sat{
+    position:fixed;z-index:1;pointer-events:none;font-size:18px;line-height:1;opacity:0;
+    filter:drop-shadow(0 0 6px rgba(200,220,255,.6));
+  }
+  .sat.go{animation:orbit 16s linear forwards}
+  @keyframes orbit{
+    0%  {transform:translate(-12vw,10vh) rotate(8deg);opacity:0}
+    6%  {opacity:.95} 94%{opacity:.95}
+    100%{transform:translate(116vw,-14vh) rotate(6deg);opacity:0}
   }
 
   /* --- chauves-souris (coucher) --- */
@@ -858,6 +910,19 @@
     <span class="crosser plane p1 blue" id="plane1" aria-hidden="true"><span class="body">✈️</span></span>
     <span class="crosser plane p2 red" id="plane2" aria-hidden="true"><span class="body">✈️</span></span>
     <span class="crosser plane p3 green" id="plane3" aria-hidden="true"><span class="body">✈️</span></span>
+
+    <span class="ladybug" id="lady1" aria-hidden="true">🐞</span>
+    <span class="ladybug" id="lady2" aria-hidden="true">🐞</span>
+    <span class="ladybug" id="lady3" aria-hidden="true">🐞</span>
+
+    <span class="heli h1" id="heli1" aria-hidden="true">🚁</span>
+    <span class="heli h2" id="heli2" aria-hidden="true">🚁</span>
+
+    <span class="owl" id="owl1" aria-hidden="true">🦉</span>
+    <span class="owl" id="owl2" aria-hidden="true">🦉</span>
+
+    <span class="sat" id="sat1" aria-hidden="true">🛰️</span>
+    <span class="sat" id="sat2" aria-hidden="true">🛸</span>
 
     <span class="bat c1" id="bat1" aria-hidden="true">🦇</span>
     <span class="bat c2" id="bat2" aria-hidden="true">🦇</span>
@@ -1021,7 +1086,7 @@
 
     <!-- ================= NOTES ================= -->
     <section class="view" id="view-notes">
-      <div class="form-bare" aria-label="Nouvelle note" style="margin-top:96px">
+      <div class="form-bare" aria-label="Nouvelle note" style="margin-top:112px">
         <div class="field">
           <textarea id="noteTxt" rows="2" maxlength="600"
                     placeholder="Écrivez votre note…" aria-label="Texte de la note"></textarea>
@@ -1389,10 +1454,12 @@
     $wxPlace.textContent=(data.label||"MA POSITION").toUpperCase();
     $wxMeta.textContent="Mis à jour à "+pad(new Date().getHours())+"h"+pad(new Date().getMinutes());
 
+    /* les elements lever/coucher ont ete supprimes : on ne les touche plus.
+       (leur reference faisait planter paintWeather, d'ou le faux message d'erreur) */
     var d=data.daily;
-    if(d && d.sunrise && d.sunrise[0]){
-      $wxSunriseVal.textContent=d.sunrise[0].split("T")[1];
-      $wxSunsetVal.textContent=d.sunset[0].split("T")[1];
+    if(!d || !d.time || !d.time.length){
+      $wxDesc.textContent=info[0];
+      return;
     }
 
     /* une bulle par jour */
@@ -1448,8 +1515,19 @@
         +"&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m"
         +"&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset"
         +"&timezone=auto&forecast_days=5";
-      fetch(url).then(function(r){ return r.json(); })
-        .then(function(data){ wxLast=data; paintWeather(data); })
+      fetch(url)
+        .then(function(r){
+          if(!r.ok) throw new Error("http "+r.status);
+          return r.json();
+        })
+        .then(function(data){
+          wxLast=data;
+          try{ paintWeather(data); }
+          catch(err){
+            $wxDesc.textContent="Données reçues mais illisibles";
+            $wxMeta.textContent="Touchez Actualiser pour réessayer.";
+          }
+        })
         .catch(function(){
           $wxDesc.textContent="Chargement impossible";
           $wxMeta.textContent="Vérifiez la connexion, puis touchez Actualiser.";
@@ -1587,6 +1665,10 @@
   var FIREFLIES= ids("ff",12);
   var BUTTERFLIES = ids("bf",5);
   var TWINKLES = ids("tw",8);
+  var LADYBUGS   = ids("lady",3);
+  var HELIS      = ids("heli",2);
+  var OWLS       = ids("owl",2);
+  var SATS       = ids("sat",2);
   var crosserTimer=null;
 
   function restart(el){
@@ -1600,7 +1682,7 @@
 
   function resetAll(){
     try{
-      PLANES.concat(BATS).concat(SHOOTS).forEach(function(el){
+      PLANES.concat(BATS).concat(SHOOTS).concat(HELIS).concat(SATS).concat(OWLS).concat(LADYBUGS).forEach(function(el){
         if(el) el.classList.remove("go");
       });
       FIREFLIES.concat(TWINKLES).concat(BUTTERFLIES).forEach(function(el){
@@ -1631,48 +1713,62 @@
 
     try{
       if(t==="aube"){
-        scatterStars(TWINKLES,8);
+        scatterStars(TWINKLES,4);          /* quelques étoiles qui pâlissent */
         BUTTERFLIES.forEach(function(b,i){
           if(!b) return;
-          b.style.top=(28+Math.random()*48)+"vh";
-          setTimeout(function(){ restart(b); }, 300+i*800);
+          b.style.top=(26+Math.random()*50)+"vh";
+          setTimeout(function(){ restart(b); }, 300+i*760);
+        });
+        LADYBUGS.forEach(function(l,i){
+          if(!l) return;
+          setTimeout(function(){ restart(l); }, 1800+i*1600);
         });
         return;
       }
 
       if(t==="jour"){
+        /* trois avions + deux hélicoptères */
         restart(PLANES[0]);
-        setTimeout(function(){ restart(PLANES[1]); }, 1600);
-        setTimeout(function(){ restart(PLANES[2]); }, 3600);
+        setTimeout(function(){ restart(PLANES[1]); }, 1300);
+        setTimeout(function(){ restart(HELIS[0]); }, 2600);
+        setTimeout(function(){ restart(PLANES[2]); }, 4000);
+        setTimeout(function(){ restart(HELIS[1]); }, 5400);
         return;
       }
 
       if(t==="coucher"){
+        /* deux hiboux + trois chauves-souris */
         restart(BATS[0]);
-        setTimeout(function(){ restart(BATS[1]); }, 1800);
-        setTimeout(function(){ restart(BATS[2]); }, 4000);
+        setTimeout(function(){ restart(OWLS[0]); }, 1500);
+        setTimeout(function(){ restart(BATS[1]); }, 3000);
+        setTimeout(function(){ restart(OWLS[1]); }, 4600);
+        setTimeout(function(){ restart(BATS[2]); }, 6000);
         return;
       }
 
       if(t==="crepuscule"){
+        /* lucioles + étoiles bien visibles */
         FIREFLIES.forEach(function(f,i){
           if(!f) return;
           setTimeout(function(){
             f.style.left=(6+Math.random()*84)+"vw";
             f.style.top=(38+Math.random()*50)+"vh";
             restart(f);
-          }, i*380);
+          }, i*320);
         });
+        scatterStars(TWINKLES,8);
         return;
       }
 
-      /* nuit */
+      /* nuit : étoiles qui scintillent + filantes + satellite / soucoupe */
+      scatterStars(TWINKLES,8);
       restart(SHOOTS[0]);
       setTimeout(function(){ restart(SHOOTS[1]); }, 900);
-      setTimeout(function(){ restart(SHOOTS[2]); }, 1900);
-      setTimeout(function(){ restart(SHOOTS[3]); }, 3000);
-      setTimeout(function(){ restart(SHOOTS[4]); }, 4100);
-      scatterStars(TWINKLES,8);
+      setTimeout(function(){ restart(SATS[0]); }, 1800);
+      setTimeout(function(){ restart(SHOOTS[2]); }, 2900);
+      setTimeout(function(){ restart(SHOOTS[3]); }, 3900);
+      setTimeout(function(){ restart(SATS[1]); }, 5200);
+      setTimeout(function(){ restart(SHOOTS[4]); }, 6600);
     }catch(e){ /* un décor qui échoue ne doit pas casser l'app */ }
   }
 
