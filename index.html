@@ -633,6 +633,43 @@
   body.amb-stone .tab.active .label{color:#5fd99b;text-shadow:0 0 8px rgba(90,220,150,.45)}
 
   /* ================================================================
+     COULEUR DE TEXTE UNIFORME PAR AMBIANCE
+     Une règle qui couvre TOUT le texte, sans exception : c'est elle
+     qui met fin au mélange brun / noir sur le thème Papier.
+     ================================================================ */
+  body.amb-paper,
+  body.amb-paper *{
+    color:#000 !important;
+  }
+  body.amb-stone,
+  body.amb-stone *{
+    color:#fff !important;
+  }
+  /* on rend leurs couleurs aux icônes d'onglet et aux pastilles de thème */
+  body.amb-paper .tab svg, body.amb-stone .tab svg{color:inherit !important}
+  body.amb-paper .b-day.today .i, body.amb-stone .b-day.today .i{color:inherit !important}
+
+  /* les petits textes gardent une ombre adaptée pour rester lisibles
+     sur les zones claires des textures */
+  body.amb-paper .bubble,
+  body.amb-paper .carve,
+  body.amb-paper .bubble *,
+  body.amb-paper .carve *{
+    text-shadow:0 1px 1px rgba(255,255,255,.62) !important;
+  }
+  body.amb-stone .bubble,
+  body.amb-stone .carve,
+  body.amb-stone .bubble *,
+  body.amb-stone .carve *{
+    text-shadow:0 1px 3px rgba(0,25,12,.90) !important;
+  }
+  /* les champs restent nets, sans ombre */
+  body.amb-paper .field input, body.amb-paper .field textarea,
+  body.amb-stone .field input, body.amb-stone .field textarea{
+    text-shadow:none !important;
+  }
+
+  /* ================================================================
      TEXTES PILOTÉS PAR VARIABLES
      Une règle unique par famille d'élément, valable dans les trois
      ambiances. Les valeurs viennent de --txt-* déclarées plus haut.
@@ -2042,11 +2079,38 @@
     80:["Averses","🌦️"],81:["Averses","🌦️"],82:["Averses fortes","⛈️"],
     95:["Orage","⛈️"],96:["Orage grêle","⛈️"],99:["Orage violent","⛈️"]};
   function wxInfo(c){ return WX[c]||["Conditions inconnues","🌡️"]; }
+
+  /* Variante nocturne de chaque condition : on garde la description,
+     on remplace l'astre. Le soleil devient lune, les nuages restent. */
+  var WX_NUIT={
+    0:["Ciel dégagé","🌙"], 1:["Peu nuageux","🌙"], 2:["Partiellement nuageux","☁️"],
+    3:["Couvert","☁️"], 45:["Brouillard","🌫️"], 48:["Brouillard givrant","🌫️"],
+    51:["Bruine légère","🌧️"], 53:["Bruine","🌧️"], 55:["Bruine dense","🌧️"],
+    61:["Pluie faible","🌧️"], 63:["Pluie","🌧️"], 65:["Pluie forte","🌧️"],
+    71:["Neige faible","🌨️"], 73:["Neige","🌨️"], 75:["Neige forte","🌨️"],
+    80:["Averses","🌧️"], 81:["Averses","🌧️"], 82:["Averses fortes","⛈️"],
+    95:["Orage","⛈️"], 96:["Orage grêle","⛈️"], 99:["Orage violent","⛈️"]
+  };
+
+  /* true s'il fait nuit : avant 7 h ou après 19 h */
+  function isNight(){
+    var hh=new Date().getHours();
+    return hh < 7 || hh >= 19;
+  }
+
+  /* l'icône affichée : le code météo, croisé avec l'heure */
+  function wxIconFor(code){
+    if(isNight()){
+      var n=WX_NUIT[code];
+      if(n) return n[1];
+    }
+    return wxInfo(code)[1];
+  }
   var wxLast=null;
 
   function paintWeather(data){
     var cur=data.current, info=wxInfo(cur.weather_code);
-    $wxIcon.textContent=info[1];
+    $wxIcon.textContent=wxIconFor(cur.weather_code);
     $wxTemp.textContent=Math.round(cur.temperature_2m)+"°";
     $wxDesc.textContent=info[0];
     $wxFeels.textContent=Math.round(cur.apparent_temperature)+"°";
@@ -2250,7 +2314,7 @@
       b.innerHTML='<span style="width:28px;height:28px;border-radius:50%;display:block;'+
         'background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.9), '+th.accent+' 62%);'+
         'box-shadow:0 2px 6px rgba(0,0,0,.45)"></span>'+
-        '<span style="font-size:9px;font-weight:900;letter-spacing:.4px;color:#F5CDD0;'+
+        '<span style="font-size:9px;font-weight:900;letter-spacing:.4px;color:var(--txt-label);'+
         'text-shadow:0 1px 2px rgba(0,0,0,.7)">'+th.label+'</span>';
       b.addEventListener("click",function(){
         currentTheme=key; saveStr(THEME_KEY,key);
@@ -2656,9 +2720,9 @@
       b.innerHTML='<span style="width:26px;height:26px;border-radius:50%;display:block;background:'+
         (a[0]==="marble" ? "#f4f1ec" : a[0]==="paper" ? "#f6f2e8" : "#3a3a3e")+
         ';box-shadow:0 2px 6px rgba(0,0,0,.45)"></span>'+
-        '<span style="font-size:10px;font-weight:900;color:#F5CDD0;text-shadow:0 1px 2px rgba(0,0,0,.7)">'+
+        '<span style="font-size:10px;font-weight:900;color:var(--txt-label);text-shadow:0 1px 2px rgba(0,0,0,.7)">'+
         a[1]+'</span>'+
-        '<span style="font-size:8.5px;font-weight:700;color:#e0a9be">'+a[2]+'</span>';
+        '<span style="font-size:8.5px;font-weight:700;color:var(--txt-label-dim)">'+a[2]+'</span>';
       b.addEventListener("click",function(){
         appearance=a[0];
         saveStr("toknow.appearance.v1",appearance);
