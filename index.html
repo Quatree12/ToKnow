@@ -645,24 +645,44 @@
   body.amb-stone *{
     color:#fff !important;
   }
-  /* on rend leurs couleurs aux icônes d'onglet et aux pastilles de thème */
+  /* on rend leurs couleurs aux icônes et aux pastilles de thème :
+     la règle universelle ne doit pas les délaver */
   body.amb-paper .tab svg, body.amb-stone .tab svg{color:inherit !important}
   body.amb-paper .b-day.today .i, body.amb-stone .b-day.today .i{color:inherit !important}
+  body.amb-paper [style*="border-radius:50%"], body.amb-stone [style*="border-radius:50%"]{
+    color:inherit !important;
+  }
 
   /* les petits textes gardent une ombre adaptée pour rester lisibles
      sur les zones claires des textures */
-  body.amb-paper .bubble,
-  body.amb-paper .carve,
-  body.amb-paper .bubble *,
-  body.amb-paper .carve *{
+  /* L'ombre ne s'applique QU'AU TEXTE, jamais aux conteneurs ni aux
+     pseudo-éléments : c'est ce qui préservait le relief de la pierre. */
+  body.amb-paper .t, body.amb-paper .s, body.amb-paper .sub,
+  body.amb-paper .val, body.amb-paper .lbl, body.amb-paper .when,
+  body.amb-paper .note, body.amb-paper .txt, body.amb-paper .meta,
+  body.amb-paper .dn, body.amb-paper .dm, body.amb-paper .dw,
+  body.amb-paper .hh, body.amb-paper .mm, body.amb-paper .ss,
+  body.amb-paper .place, body.amb-paper .temp, body.amb-paper .wdesc,
+  body.amb-paper .wmeta, body.amb-paper .d, body.amb-paper .m,
+  body.amb-paper .panel-label, body.amb-paper .panel-note,
+  body.amb-paper .empty, body.amb-paper .count-line,
+  body.amb-paper .stack-val{
     text-shadow:0 1px 1px rgba(255,255,255,.62) !important;
   }
-  body.amb-stone .bubble,
-  body.amb-stone .carve,
-  body.amb-stone .bubble *,
-  body.amb-stone .carve *{
+
+  body.amb-stone .t, body.amb-stone .s, body.amb-stone .sub,
+  body.amb-stone .val, body.amb-stone .lbl, body.amb-stone .when,
+  body.amb-stone .note, body.amb-stone .txt, body.amb-stone .meta,
+  body.amb-stone .dn, body.amb-stone .dm, body.amb-stone .dw,
+  body.amb-stone .hh, body.amb-stone .mm, body.amb-stone .ss,
+  body.amb-stone .place, body.amb-stone .temp, body.amb-stone .wdesc,
+  body.amb-stone .wmeta, body.amb-stone .d, body.amb-stone .m,
+  body.amb-stone .panel-label, body.amb-stone .panel-note,
+  body.amb-stone .empty, body.amb-stone .count-line,
+  body.amb-stone .stack-val{
     text-shadow:0 1px 3px rgba(0,25,12,.90) !important;
   }
+
   /* les champs restent nets, sans ombre */
   body.amb-paper .field input, body.amb-paper .field textarea,
   body.amb-stone .field input, body.amb-stone .field textarea{
@@ -693,6 +713,19 @@
   .weather .temp, .bubble .val{
     color:var(--txt-strong);
     text-shadow:var(--txt-shadow);
+  }
+
+  /* ================================================================
+     MARBRE — ses vraies couleurs de texte
+     Sans ce bloc, les règles qui utilisent var(--txt-*) retombaient sur
+     une valeur non définie et délavait les pastilles et les libellés.
+     ================================================================ */
+  body:not(.amb-paper):not(.amb-stone){
+    --txt-label:#E69CBA;
+    --txt-label-dim:#F5CDD0;
+    --txt-strong:#ffffff;
+    --txt-shadow:0 2px 0 #141416, 0 6px 16px rgba(0,0,0,.7);
+    --txt-shadow-soft:0 1px 3px rgba(0,0,0,.6);
   }
 
   /* ================================================================
