@@ -122,6 +122,58 @@ distribué ici** : c'est une police commerciale, elle n'est pas redistribuable.
 Toutes doivent être de **vrais PNG** — un JPEG renommé `.png` peut être refusé
 par certains lanceurs Android. À vérifier si une icône ne s'affiche pas.
 
+## Comment modifier un thème
+
+Tout le rendu d'une ambiance tient dans **cinq variables**, déclarées au début
+de la feuille de style. Changer un thème revient à modifier ces quelques lignes.
+
+### Les couleurs de texte
+
+| Variable | Rôle | Marbre | Papier | Pierre brute |
+|---|---|---|---|---|
+| `--txt-label` | libellés, accents | `#E69CBA` | `#000` | `#fff` |
+| `--txt-label-dim` | valeurs secondaires | `#F5CDD0` | `#000` | `#fff` |
+| `--txt-strong` | grands chiffres | `#ffffff` | `#000` | `#fff` |
+| `--txt-shadow` | ombre des grandes valeurs | `none` | `none` | ombre sombre |
+| `--txt-shadow-soft` | ombre des libellés | `none` | ombre claire | ombre sombre |
+
+Elles sont déclarées trois fois : dans `:root` (valeurs par défaut), puis
+répétées dans les blocs `body.amb-paper` et `body.amb-stone`. Le thème Marbre
+hérite de `body:not(.amb-paper):not(.amb-stone)`.
+
+> **Attention** : si vous ajoutez une variable, déclarez-la dans **les trois
+> contextes**. Une variable non définie fait retomber l'élément sur du blanc
+> délavé — c'est l'erreur qui a cassé le thème Marbre une fois.
+
+### Les textures
+
+| Variable | Matière |
+|---|---|
+| `--tex-cuivre` | cuivre et chrome (ambiance Papier) |
+| `--tex-emeraude` | émeraude coulée (ambiance Pierre brute) |
+
+Ce sont des images JPEG encodées en base64, déclarées une seule fois dans
+`:root`. Pour les remplacer : compressez la nouvelle image à **400 px de
+large, qualité 80** (≈ 40 Ko), puis remplacez le contenu de la variable.
+
+> **Syntaxe** : on écrit `var(--tex-cuivre)`, **jamais**
+> `url("var(--tex-cuivre)")`. Un navigateur ne résout pas `var()` à
+> l'intérieur d'un `url()` : l'image est ignorée et le fond retombe sur sa
+> couleur de secours.
+
+### Ajouter une ambiance
+
+1. Déclarez un bloc `body.amb-mienne{ --txt-label:…; --txt-strong:…; }`.
+2. Ajoutez son entrée dans la liste `APPEARANCES` (une ligne par ambiance).
+3. Si elle ne doit pas avoir d'animations, vérifiez `animationsAllowed()`.
+
+### Les décors animés
+
+Le tableau `SKY_THEMES` définit les six ciels. La fonction `launchCrosser()`
+choisit le décor selon le thème effectif — oiseaux à l'aube, avions le jour,
+chauves-souris au coucher, lucioles au crépuscule, étoiles la nuit. Chaque
+décor a son élément HTML et son animation CSS.
+
 ## Notes techniques
 
 - **Stockage** : `localStorage` uniquement. Rien ne quitte l'appareil.
